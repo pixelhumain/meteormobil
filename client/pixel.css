@@ -1,0 +1,33 @@
+
+.meteor-status {
+	z-index:100;
+}
+.avatar{
+float: left;
+margin-right: 16px;
+width: 40px;
+height: 40px;
+}
+
+
+svg {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 3500px;
+    z-index: -1;
+}
+
+.view{
+      background-color: rgba(255, 252, 252, 0.74);
+}
+
+.bar.bar-dark .title {
+    font-family: "Homestead";
+    color: #F5E414;
+}
+
+.logo{
+  text-align: center;
+}

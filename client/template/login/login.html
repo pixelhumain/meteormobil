@@ -1,0 +1,39 @@
+
+  <template name="login">
+    {{#contentFor "headerTitle"}}
+     <h1 class="title">Pixel Humain</h1>
+  {{/contentFor}}
+    {{#ionView view-title="Login" hide-nav-bar="true"}}
+      {{#ionContent class="rubyonic-pane"}}
+
+      	<div class="logo">
+      		<img src="/logo320.png" alt="">
+    	</div>
+
+      	<form class="login-form">
+          	<div class="padding form-rb-plain">
+              {{#if error}}
+              <div class="card">
+                <div class="item item-text-wrap homestead">
+                  {{_ "Error"}}
+                </div>
+              </div>
+              {{/if}}
+            <div class="list">
+              <label class="item item-input">
+                <span class="input-label">{{_ "email"}}</span>
+                <input type="email" id="email">
+              </label>
+              <label class="item item-input">
+                <span class="input-label">{{_ "password"}}</span>
+                <input type="password" id="password">
+              </label>
+            </div>
+            <div class="padding">
+                    <button type="submit" class="button button-block button-positive {{#if loadingLogging}}activated{{/if}}">{{_ "loggin"}}</button>
+                  </div>
+                </div>
+    	</form>
+      {{/ionContent}}
+    {{/ionView}}
+  </template>

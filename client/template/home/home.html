@@ -1,0 +1,45 @@
+<template name="home">
+  {{#contentFor "headerTitle"}}
+   <h1 class="title">Pixel Humain</h1>
+{{/contentFor}}
+{{#contentFor "headerButtonLeft"}}
+
+{{/contentFor}}
+
+{{#contentFor "headerButtonRight"}}
+{{#if currentUser}}
+    <button class="button button-icon icon ion-log-out logout"></button>
+{{else}}
+    <a class="button button-icon icon ion-log-in" href="{{pathFor route='loggin'}}"></a>
+{{/if}}
+{{/contentFor}}
+  {{#ionView}}
+    {{#ionContent}}
+        {{#if currentUser}}
+        <div class="card">
+          <div class="item item-text-wrap homestead">
+            {{_ "Welcome"}} {{currentUser.profile.pixelhumain.name}}
+          </div>
+        </div>
+        {{/if}}
+          <div class="padding">
+            <div class="list">
+        <div class="item item-divider">
+            {{_ "Users online"}} <span class="badge badge-dark">{{countUsers}}</span>
+          </div>
+        {{#each users}}
+          {{> itemProfile}}
+        {{/each}}
+        </div>
+              </div>
+    {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="itemProfile">
+    <a class="item" href="">
+    {{> avatar userId=_id shape='circle'}}
+      <h2>{{currentUser.profile.pixelhumain.name}}</h2>
+      <span class="badge {{#if profile.online}}badge-balanced{{else}}badge-assertive{{/if}}">{{_"on"}}</span>
+  </a>
+ </template>
