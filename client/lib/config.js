@@ -10,10 +10,3 @@ Meteor.loginAsPixel = function(email,password, callback) {
     userCallback: callback
   });
 };
-
-Avatar.options = {
-  fallbackType: 'initials',
-  gravatarDefault: 'identicon',
-  //emailHashProperty: "email_hash",
-  //defaultImageUrl: '/logo320.png'
-};

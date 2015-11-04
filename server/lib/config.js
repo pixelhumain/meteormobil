@@ -14,7 +14,7 @@ console.log(pswdDigest)
   var userC = Citoyens.findOne({email: loginRequest.email,pwd:pswdDigest},{fields:{pwd:0}});
 
   if(!userC) {
-    return null;
+    throw new Meteor.Error("No valid");
   } else {
     //ok valide
     var userM = Meteor.users.findOne({'_id':userC._id._str});
@@ -23,11 +23,10 @@ console.log(pswdDigest)
       //Meteor.user existe
       userId= userM._id;
       console.log('Update');
-      Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
+      Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC,username:userC.email}});
     }else{
       //Meteor.user n'existe pas
-      console.log(userC);
-      userId = Meteor.users.insert({_id:userC._id._str,username:userC.name});
+      userId = Meteor.users.insert({_id:userC._id._str,username:userC.email});
       Meteor.users.update(userId,{$set: {'profile.pixelhumain': userC}});
     }
   }

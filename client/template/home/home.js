@@ -3,62 +3,24 @@
     return Meteor.user().username || Meteor.user().profile.name;
 }
 
-  let onSuccess = function (imageData) {
-
-    let str = +new Date + Math.floor((Math.random() * 100) + 1) + ".jpg";
-
-    Meteor.call("cfsbase64tos3up",imageData,str, function (error, photoret) {
-      if(photoret){
-      	     console.log('photoret '+photoret);
-    	      Photos.insert({
-            urlimage: photoret,
-            createdAt: new Date(),
-            owner: Meteor.userId(),
-            username: userName()
-        }, function(error, result) {
-            if (!error) {
-                /*Meteor.users.update({
-                    _id: Meteor.userId()
-                }, {
-                    $inc: {
-                        "profile.photosCount": 1
-                    }
-                });*/
-                //call push
-                //Meteor.call('pushphoto',{lat:latLng.latitude,lng:latLng.longitude},result);
-
-            }
-        });
-        }
-    	});
-
-
-    Router.go("/photos");
-  };
 
 Template.layout.events({
   "click .logout": function (event) {
       event.preventDefault();
       Meteor.logout();
       Router.go('/login');
-  },
-  "click .photo-link": function () {
-    const options = {
-      width: 350,
-      height: 350,
-      quality: 75
-      };
-    //MeteorCamera
-    MeteoricCamera.getPicture(options,function (error, data) {
-      // we have a picture
-      if (! error) {
-        onSuccess(data);
-      }else{
-        console.log(error);
-        }
-    });
   }
 });
+
+Template.layout.helpers({
+    '_home': function () {
+      return  TAPi18n.__('home');
+    },
+    '_events': function () {
+      return  TAPi18n.__('events');
+    }
+  });
+
 
 Template.home.helpers({
     users: function () {
@@ -68,3 +30,29 @@ Template.home.helpers({
       return Meteor.users.find({}).count();
     }
   });
+
+  Template.listEvents.helpers({
+      users: function () {
+        return Meteor.users.find({});
+      },
+      countUsers: function () {
+        return Meteor.users.find({}).count();
+      },
+      citoyen: function () {
+        return Citoyens.findOne({});
+      },
+      events: function () {
+        return Events.find({});
+      },
+      countEvents: function () {
+        return Events.find({}).count();
+      },
+      isStart : function () {
+        let start = moment(this.startDate).toDate();
+        let now = moment().toDate();
+        return moment(start).isBefore(now); // True
+      },
+      countAttendees : function () {
+        return this.links && this.links.attendees && _.size(this.links.attendees);
+      }
+    });

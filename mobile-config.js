@@ -8,24 +8,24 @@ App.info({
 });
 
 App.icons({
-  'android_mdpi': 'ressource/res/mipmap-mdpi/ic_launcher.png',
-  'android_hdpi': 'ressource/res/mipmap-hdpi/ic_launcher.png',
-  'android_xhdpi': 'ressource/res/mipmap-xhdpi/ic_launcher.png'
+  'android_ldpi': 'ressource/android/drawable-ldpi/appicon.png',
+  'android_mdpi': 'ressource/android/drawable-mdpi/appicon.png',
+  'android_hdpi': 'ressource/android/drawable-hdpi/appicon.png',
+  'android_xhdpi': 'ressource/android/drawable-xhdpi/appicon.png'
 });
 
 App.launchScreens({
-  // Android
-  'android_ldpi_portrait': 'ressource/res/res-long-port-ldpi/default.png',
-  'android_ldpi_landscape': 'ressource/res/res-long-land-ldpi/default.png',
-  'android_mdpi_portrait': 'ressource/res/res-long-port-mdpi/default.png',
-  'android_mdpi_landscape': 'ressource/res/res-long-land-mdpi/default.png',
-  'android_hdpi_portrait': 'ressource/res/res-long-port-hdpi/default.png',
-  'android_hdpi_landscape': 'ressource/res/res-long-land-hdpi/default.png',
-  'android_xhdpi_portrait': 'ressource/res/res-long-port-xhdpi/default.png',
-  'android_xhdpi_landscape': 'ressource/res/res-long-land-xhdpi/default.png'
+  'android_ldpi_portrait': 'ressource/android/drawable-ldpi/background.9.png',
+  'android_ldpi_landscape': 'ressource/android/drawable-ldpi/background.9.png',
+  'android_mdpi_portrait': 'ressource/android/drawable-mdpi/background.9.png',
+  'android_mdpi_landscape': 'ressource/android/drawable-mdpi/background.9.png',
+  'android_hdpi_portrait': 'ressource/android/drawable-hdpi/background.9.png',
+  'android_hdpi_landscape': 'ressource/android/drawable-hdpi/background.9.png',
+  'android_xhdpi_portrait': 'ressource/android/drawable-xhdpi/background.9.png',
+  'android_xhdpi_landscape': 'ressource/android/drawable-xhdpi/background.9.png'
 });
 
 App.setPreference('StatusBarOverlaysWebView', 'false');
-App.setPreference('StatusBarBackgroundColor', '#ffffff');
+App.setPreference('StatusBarBackgroundColor', '#000000');
 
 App.accessRule('*');

@@ -56,7 +56,7 @@ input, button, select, textarea {
 	.rubyonic-pane .ruby-button-clear {border:none; background:none;}
 
 
-.logo {padding:20px 0 0 0; text-align: center;}
+.logo {padding:0; text-align: center;}
 
 
 #iron-router-progress {
@@ -65,4 +65,53 @@ input, button, select, textarea {
 }
 #iron-router-progress.spinner:before {
     border-color : #F5E414;
+}
+
+
+.meteor-status {
+	z-index:100;
+}
+.avatar{
+float: left;
+margin-right: 16px;
+width: 40px;
+height: 40px;
+}
+
+
+svg {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 3500px;
+    z-index: -1;
+    background-color: #ffffff;
+}
+
+body, .view{
+      background-color: rgba(255, 252, 252, 0.74);
+}
+
+.dark{
+color: $dark;
+}
+
+.bar.bar-dark .title {
+    font-family: "Homestead";
+    color: #F5E414;
+		text-align: center;
+}
+
+.logo{
+  text-align: center;
+  img{
+    width:65%;
+  }
+}
+
+.signup-form,.login-form{
+  .input-label{
+    width:10%;
+  }
 }

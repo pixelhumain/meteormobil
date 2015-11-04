@@ -1,0 +1,48 @@
+<template name="newsDetailEvents">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  {{#with event}}
+  <div class="list card">
+    {{#each news}}
+    <div class="item">
+      {{> avatar userId=authorNews._id._str size='small' shape='rounded' class=''}}
+      <h2>{{authorNews.name}}</h2>
+      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+    </div>
+    <div class="item item-body">
+      {{#with docNews}}
+      {{#each photoNews}}
+      <img src="{{this.url store='photosLarge' uploading='/default.png' storing='/default.png'}}" class="full-image"  />
+      {{/each}}
+      {{/with}}
+    </div>
+    <div class="item tabs tabs-secondary tabs-icon-left">
+      <a class="tab-item like-photo" id="{{_id}}" href="#">
+        <i class="icon ion-thumbsup"></i>
+        {{likesCount}} {{_ "like"}}
+      </a>
+      {{#if isAuthor}}
+      <a class="tab-item delete-photo" id="{{_id}}" href="#">
+        <i class="icon ion-trash-a"></i>
+        {{_ "delete"}}
+      </a>
+      {{/if}}
+    </div>
+      {{/each}}
+  </div>
+  {{/with}}
+  {{/ionContent}}
+  {{/ionView}}
+</template>

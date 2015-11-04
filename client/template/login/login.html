@@ -1,39 +1,121 @@
 
-  <template name="login">
-    {{#contentFor "headerTitle"}}
-     <h1 class="title">Pixel Humain</h1>
+<template name="login">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">Pixel Humain</h1>
   {{/contentFor}}
-    {{#ionView view-title="Login" hide-nav-bar="true"}}
-      {{#ionContent class="rubyonic-pane"}}
+  {{#ionView view-title="Login" hide-nav-bar="true"}}
+  {{#ionContent class="rubyonic-pane"}}
 
-      	<div class="logo">
-      		<img src="/logo320.png" alt="">
-    	</div>
+  <div class="logo">
+    <img src="/logo320.png" alt="" class="animated infinite jello">
+  </div>
 
-      	<form class="login-form">
-          	<div class="padding form-rb-plain">
-              {{#if error}}
-              <div class="card">
-                <div class="item item-text-wrap homestead">
-                  {{_ "Error"}}
-                </div>
-              </div>
-              {{/if}}
-            <div class="list">
-              <label class="item item-input">
-                <span class="input-label">{{_ "email"}}</span>
-                <input type="email" id="email">
-              </label>
-              <label class="item item-input">
-                <span class="input-label">{{_ "password"}}</span>
-                <input type="password" id="password">
-              </label>
-            </div>
-            <div class="padding">
-                    <button type="submit" class="button button-block button-positive {{#if loadingLogging}}activated{{/if}}">{{_ "loggin"}}</button>
-                  </div>
-                </div>
-    	</form>
-      {{/ionContent}}
-    {{/ionView}}
-  </template>
+  <form class="login-form">
+    <div class="padding form-rb-plain">
+      {{#if error}}
+      <div class="card">
+        <div class="item item-text-wrap animated shake homestead">
+          {{error}}
+        </div>
+      </div>
+      {{/if}}
+      <div class="animated fadeInLeft list">
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-email"></i>
+          </span>
+          <input type="email" id="email" placeholder="{{_ "email"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="password" placeholder="{{_ "password"}}">
+        </label>
+      </div>
+      <div class="animated fadeInUp padding">
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "loggin"}}</button>
+      </div>
+      <div class="card animated fadeInUp padding homestead">{{_ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{_ "signin"}}</a>.</div>
+    </div>
+  </form>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="signin">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">Pixel Humain</h1>
+  {{/contentFor}}
+  {{#ionView view-title="Login" hide-nav-bar="true"}}
+  {{#ionContent class="rubyonic-pane"}}
+
+  <div class="logo">
+    <img src="/logo320.png" alt="" class="animated infinite jello">
+  </div>
+
+  <form class="signup-form">
+    <div class="padding form-rb-plain">
+      {{#if error}}
+      <div class="card">
+        <div class="item item-text-wrap animated shake homestead">
+          {{error}}
+        </div>
+      </div>
+      {{/if}}
+      <div class="animated fadeInLeft list">
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-person"></i>
+          </div>
+          <input type="text" id="name" placeholder="{{_ "name"}}">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-email"></i>
+          </span>
+          <input type="email" id="email" placeholder="{{_ "email"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="password" placeholder="{{_ "password"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-locked"></i>
+          </div>
+          <input type="password" id="repassword" placeholder="{{_ "repassword"}}">
+        </label>
+        <label class="item item-input">
+          <div class="input-label">
+            <i class="icon ion-home"></i>
+          </div>
+          <input type="text" id="codepostal" placeholder="{{_ "postcode"}}">
+        </label>
+        {{#if city}}
+        <label class="item item-input item-select">
+          <div class="input-label">
+            <i class="icon ion-location"></i>
+          </div>
+          <select name="city" id="city">
+          {{#each city}}
+            <option value="{{insee}}">{{name}}</option>
+          {{/each}}
+          </select>
+        </label>
+        {{/if}}
+      </div>
+      {{#if city}}
+      <div class="animated fadeInUp padding">
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "signin"}}</button>
+      </div>
+      {{/if}}
+      <div class="card animated fadeInUp padding homestead">{{_ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{_ "loggin"}}.</a></div>
+    </div>
+  </form>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
