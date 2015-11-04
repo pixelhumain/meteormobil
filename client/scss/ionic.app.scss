@@ -1,0 +1,117 @@
+
+
+$ionicons-font-path: "/fonts" !default;
+
+$font-family-base : Raleway !default;
+$font-src : '/fonts/Raleway-Regular.ttf';
+
+$secondary-font-family-base : Ubuntu !default;
+$secondary-font-src : '/fonts/Ubuntu-Light.ttf';
+
+$secondary-font-family-base : Ubuntu !default;
+$secondary-font-src : '/fonts/Ubuntu-Light.ttf';
+
+@font-face {
+    font-family: $font-family-base;
+    src: url($font-src) format('truetype');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: $secondary-font-family-base;
+    src: url($secondary-font-src) format('truetype');
+    font-weight: 200;
+}
+
+@font-face
+{
+font-family: Homestead;
+src: url('/fonts/Homestead-Regular.ttf');
+}
+
+.homestead{font-family:"Homestead"}
+
+@import 'ionic';
+@import 'ionicons';
+
+body *, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-family: $font-family-base , Fallback, sans-serif;
+}
+
+.secondary-font {
+  font-family: $secondary-font-family-base , Fallback, sans-serif;
+}
+
+input, button, select, textarea {
+	font-family: $font-family-base , Fallback, sans-serif;
+}
+.bold {font-weight:bold;}
+.text-right {text-align: right;}
+.text-left {text-align: left;}
+.uppercase {text-transform:uppercase;}
+
+	$default-screen-background : '';
+	$sidebar-profile-background : '';
+	.no-margin {margin:0;}
+	.rubyonic-pane .ruby-button-clear {border:none; background:none;}
+
+
+.logo {padding:0; text-align: center;}
+
+
+#iron-router-progress {
+    background-color : #F5E414;
+    box-shadow       : 0 0 5px #F5E414;
+}
+#iron-router-progress.spinner:before {
+    border-color : #F5E414;
+}
+
+
+.meteor-status {
+	z-index:100;
+}
+.avatar{
+float: left;
+margin-right: 16px;
+width: 40px;
+height: 40px;
+}
+
+
+svg {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 3500px;
+    z-index: -1;
+    background-color: #ffffff;
+}
+
+body, .view{
+      background-color: rgba(255, 252, 252, 0.74);
+}
+
+.dark{
+color: $dark;
+}
+
+.bar.bar-dark .title {
+    font-family: "Homestead";
+    color: #F5E414;
+		text-align: center;
+}
+
+.logo{
+  text-align: center;
+  img{
+    width:65%;
+  }
+}
+
+.signup-form,.login-form{
+  .input-label{
+    width:10%;
+  }
+}

@@ -1,0 +1,95 @@
+<template name="home">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">Pixel Humain</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+  {{#if currentUser}}
+  <button class="button button-icon icon ion-log-out logout"></button>
+  {{else}}
+  <a class="button button-icon icon ion-log-in" href="{{pathFor route='loggin'}}"></a>
+  {{/if}}
+  {{/contentFor}}
+  {{#ionView}}
+  {{#ionContent}}
+  {{#if currentUser}}
+  <div class="card">
+    {{#animate type="jello" name="one"}}
+    <div class="item item-text-wrap homestead">
+      {{_ "Welcome"}} {{currentUser.profile.pixelhumain.name}}
+    </div>
+    {{/animate}}
+  </div>
+  {{/if}}
+  <div class="padding">
+    <div class="list">
+      <div class="item item-divider">
+        <i class="ion-android-contacts"></i> {{_ "users online"}} <span class="badge badge-dark">{{countUsers}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each users}}
+      {{> itemProfile}}
+      {{/each}}
+      {{/transition}}
+    </div>
+  </div>
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="itemProfile">
+  <a class="item animated out" href="">
+    {{> avatar userId=_id shape='circle'}}
+    <h2>{{username}}</h2>
+    <span class="badge {{#if profile.online}}badge-balanced{{else}}badge-assertive{{/if}}">{{_"on"}}</span>
+  </a>
+</template>
+
+<template name="listEvents">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "events"}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  {{#with citoyen}}
+  <div class="padding">
+    <div class="list">
+      <div class="item item-divider">
+        <i class="ion-android-calendar"></i> {{_ "events"}} <span class="badge badge-dark">{{countEvents}}</span>
+      </div>
+      {{#each events}}
+      <a class="item" href="{{pathFor 'newsListEvents' _id=this._id._str}}">
+        <h2>{{name}}</h2>
+        <span class="badge {{#if isStart}}badge-balanced{{else}}badge-dark{{/if}}"><i class="icon ion-person"></i> {{countAttendees}}</span>
+        <p>
+          {{#if isStart}}
+          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+          <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
+          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}
+          {{else}}
+          <i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+          <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+          {{/if}}
+          <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
+        </p>
+      </a>
+      {{/each}}
+    </div>
+  </div>
+  {{/with}}
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>

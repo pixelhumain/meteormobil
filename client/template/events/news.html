@@ -1,0 +1,145 @@
+<template name="newsListEvents">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  {{#with event}}
+  <div class="card">
+    <div class="item">
+      <h2 class="homestead">{{name}}</h2>
+    </div>
+    <div class="item item-text-wrap">
+      <p>{{description}}</p>
+      <p>{{address.postalCode}} {{address.addressLocality}}</p>
+      <p>{{_ "creator"}} : {{creatorEvent.name}}</p>
+      <p><i class="icon ion-android-alarm-clock"></i> {{_ "start"}} : {{livestamp startDate}} <br>
+        <i class="icon ion-android-alarm-clock"></i> {{_ "end"}} : {{livestamp endDate}} <br>
+        <i class="icon ion-android-time"></i> {{_ "duration"}} : {{diffInText startDate endDate}}<br>
+        <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
+      </p>
+    </div>
+  </div>
+
+  <div class="padding">
+    <div class="button-bar bar-positive">
+      <button class="button button-small photo-link">{{> ionIcon icon="camera"}}</button>
+      <a href="{{pathFor 'newsAddEvent' _id=_id._str}}" class="button button-small">{{> ionIcon icon="compose"}}</a>
+    </div>
+  </div>
+
+  <div class="list padding">
+    <div class="item item-divider homestead">
+      {{_ "news"}} {{name}} <span class="badge badge-dark">{{countNews}}</span>
+    </div>
+    {{#each news}}
+    {{> newsEvent}}
+    {{/each}}
+  </div>
+  {{#if isLimit countNews}}
+  <div class="padding">
+    <button class="button  button-block button-dark give-me-more">
+      {{_ "more"}}...
+    </button>
+  </div>
+  {{/if}}
+  {{/with}}
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="newsEvent">
+  <a href="{{pathFor 'newsDetailEvents' _id=../_id._str newsId=_id._str}}" class="item {{#if docNews.objId}}item-thumbnail-left{{/if}}">
+    {{#with docNews}}
+    {{#each photoNews}}
+    <img src="{{this.url store='photosThumb' uploading='/default.png' storing='/default.png'}}"  />
+    {{/each}}
+    {{/with}}
+    <h2>{{name}} {{_id._str}}</h2>
+    <p>{{text}}</p>
+    {{#each tags}}
+    <span class=""><i class="icon ion-pound"></i> {{this}}</span>
+    {{/each}}
+    <p>{{_ "author"}} : {{authorNews.name}}</p>
+    <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+  </a>
+</template>
+
+<template name="newsAddEvent">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "post a news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "post a news"}}
+    </div>
+    {{#autoForm id="addNew" collection="News" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{> newsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "publish"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="newsEditEvent">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "news"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a news"}}
+    </div>
+    {{#autoForm id="editNew" collection="News" type="update" template="ionic" class="padding form-rb-plain"}}
+    {{> newsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="newsFields">
+	{{> afQuickField name='name' label=_name}}
+  {{> afQuickField name='text' label=_text rows=8}}
+</template>
