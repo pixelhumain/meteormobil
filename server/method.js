@@ -23,8 +23,42 @@ Meteor.methods({
 
       let insee = Cities.findOne({insee: user.city});
       console.log(insee);
-      console.log({name: user.name,email: user.email,pwd: pswdDigest,created: new Date(),address:{ addressLocality: insee.alternateName,codeInsee: insee.insee,postalCode: insee.cp},geo:{latitude: insee.geo.latitude,longitude: insee.geo.longitude}});
-      let userId = Citoyens.insert({name: user.name,email: user.email,pwd: pswdDigest,created: new Date(),address: { addressLocality: insee.alternateName,codeInsee: insee.insee,postalCode: insee.cp},geo: {latitude: insee.geo.latitude,longitude: insee.geo.longitude}});
+      console.log({
+        name: user.name,
+        email: user.email,
+        pwd: pswdDigest,
+        created: new Date(),
+        address: {
+          addressLocality: insee.alternateName,
+          codeInsee: insee.insee,postalCode:
+          insee.cp
+        },
+        geo: {
+          latitude: insee.geo.latitude,
+          longitude: insee.geo.longitude
+        },
+        geoPosition: {
+          type: "Point",
+          coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
+        }});
+      let userId = Citoyens.insert({
+        name: user.name,
+        email: user.email,
+        pwd: pswdDigest,
+        created: new Date(),
+        address: {
+          addressLocality: insee.alternateName,
+          codeInsee: insee.insee,postalCode:
+          insee.cp
+        },
+        geo: {
+          latitude: insee.geo.latitude,
+          longitude: insee.geo.longitude
+        },
+        geoPosition: {
+          type: "Point",
+          coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
+        }});
         return userId;
       }else{
         throw new Meteor.Error("Email not unique");
@@ -241,64 +275,64 @@ Meteor.methods({
       if (err) console.log(err, err.stack); // error
       else console.log(); // deleted
     })*/
-        News.remove({
-          _id: new Mongo.ObjectID(photoId),
-          author: this.userId
-        });
-        Documents.remove({
-          id: photoId,
-          author: this.userId
-        });
-        Photosimg.remove({_id:photo.objId})
-      }else{
-        News.remove({
-          _id: new Mongo.ObjectID(photoId),
-          author: this.userId
-        });
-      }
-    },
-    'likePhoto': function(photoId) {
-      check(photoId, String);
+    News.remove({
+      _id: new Mongo.ObjectID(photoId),
+      author: this.userId
+    });
+    Documents.remove({
+      id: photoId,
+      author: this.userId
+    });
+    Photosimg.remove({_id:photo.objId})
+  }else{
+    News.remove({
+      _id: new Mongo.ObjectID(photoId),
+      author: this.userId
+    });
+  }
+},
+'likePhoto': function(photoId) {
+  check(photoId, String);
 
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
+  if (!this.userId) {
+    throw new Meteor.Error("not-authorized");
+  }
 
-      if (News.findOne({
-        _id: new Mongo.ObjectID(photoId),
-        likes: {
-          $in: [this.userId]
-        }
-      })) {
-        News.update({
-          _id: new Mongo.ObjectID(photoId)
-        }, {
-          $pull: {
-            likes: this.userId
-          }
-        })
-      } else {
-        News.update({
-          _id: new Mongo.ObjectID(photoId)
-        }, {
-          $push: {
-            likes: this.userId
-          }
-        });
-
-        /*Push.send({
-        from: 'push',
-        title: 'Nouveau J\'aime',
-        text: 'Nouveau J\'aime de ' + userName(),
-        payload: {
-        title: 'Nouveau J\'aime',
-        photoId: photoId,
-        pushType: 'likePhoto'
-      },
-      query: {
-      userId: News.findOne({_id: new Mongo.ObjectID(photoId)},{fields:{author:1}}).author
+  if (News.findOne({
+    _id: new Mongo.ObjectID(photoId),
+    likes: {
+      $in: [this.userId]
     }
-  });*/
+  })) {
+    News.update({
+      _id: new Mongo.ObjectID(photoId)
+    }, {
+      $pull: {
+        likes: this.userId
+      }
+    })
+  } else {
+    News.update({
+      _id: new Mongo.ObjectID(photoId)
+    }, {
+      $push: {
+        likes: this.userId
+      }
+    });
+
+    /*Push.send({
+    from: 'push',
+    title: 'Nouveau J\'aime',
+    text: 'Nouveau J\'aime de ' + userName(),
+    payload: {
+    title: 'Nouveau J\'aime',
+    photoId: photoId,
+    pushType: 'likePhoto'
+  },
+  query: {
+  userId: News.findOne({_id: new Mongo.ObjectID(photoId)},{fields:{author:1}}).author
+}
+});*/
 }
 },
 'favoris': function(userId) {

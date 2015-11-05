@@ -8,6 +8,7 @@ Template.login.onCreated(function () {
 
 Template.login.onRendered(function () {
   //Session.set('error',null);
+  templateDictionary.set( 'error', false );
 });
 
 Template.login.events({
@@ -62,6 +63,7 @@ Template.login.onCreated(function () {
 Template.signin.onRendered(function () {
   //Session.set('error',null);
   //Session.set('cities',null);
+  templateDictionary.set( 'error', false );
 });
 
 Template.signin.events({

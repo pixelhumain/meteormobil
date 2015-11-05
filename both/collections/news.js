@@ -1,11 +1,12 @@
 News = new Meteor.Collection("news", {idGeneration : 'MONGO'});
 
+//quel sont les types ?
 
 News.attachSchema(
   new SimpleSchema({
     name : {
       type : String,
-      optional: true,
+      optional: true
     },
     text : {
       type : String,
@@ -73,6 +74,7 @@ News.attachSchema(
     },
     type : {
       type: String,
+      allowedValues: ['events']
     },
     tags : {
       type: [String],
