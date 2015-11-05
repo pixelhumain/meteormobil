@@ -1,30 +1,47 @@
 Documents = new Meteor.Collection("documents", {idGeneration : 'MONGO'});
 
+//les champs collection,objId sont pour Meteor indique la collection et l'id à aller chercher pour avoir l'image coté php
+//cfs.photosimg.filerecord
+//contentKey  ex : event.news
+//il y a quoi dans category ?
 Documents.attachSchema(
   new SimpleSchema({
     id : {
       type : String,
     },
     type : {
-      type : String
+      type : String,
+      allowedValues: ['events']
     },
     collection : {
-      type : String
+      type : String,
+      defaultValue : 'cfs.photosimg.filerecord'
     },
     objId : {
       type : String
     },
     moduleId : {
-      type : String
+      type : String,
+      defaultValue : 'meteor.communecter'
     },
     doctype : {
-      type : String
+      type : String,
+      allowedValues: ['image']
     },
     name : {
       type : String
     },
+    size : {
+      type : String,
+      optional : true
+    },
     contentKey : {
-      type : String
+      type : String,
+      optional : true
+    },
+    category : {
+      type : String,
+      optional : true
     },
     created: {
       type: Date,
