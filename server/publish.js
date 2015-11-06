@@ -8,14 +8,16 @@ console.log(JSON.stringify(citoyen.fetch()));
 return citoyen;
 });*/
 
+
+
+
 Meteor.publishComposite('citoyen', function() {
 	if (!this.userId) {
 		return;
 	}
-	return {
+		return {
 		find: function() {
 			let objectId = new Mongo.ObjectID(this.userId);
-			console.log(Citoyens.find({_id:objectId},{_disableOplog: true,fields:{pwd:0}}).fetch());
 			return Citoyens.find({_id:objectId},{_disableOplog: true,fields:{pwd:0}});
 		},
 		children: [
@@ -209,6 +211,44 @@ return;
 }
 return Photosimg.find();
 });
+
+Meteor.publish('citoyenOnlineProx', function(latlng,radius) {
+	check(latlng, {longitude:Number,latitude:Number});
+	check(radius, Number);
+	if (!this.userId) {
+		return;
+	}
+	//moulinette pour mettre à jour les Point pour que l'index soit bon
+	/*
+	Citoyens.find({}).fetch().map(function(c){
+		if(c.geo && c.geo.longitude){
+			Citoyens.update({_id:c._id}, {$set: {'geoPosition': {
+												type: "Point",
+												'coordinates': [parseFloat(c.geo.longitude), parseFloat(c.geo.latitude)]
+										}}});
+		}
+	});*/
+	Citoyens._ensureIndex({
+			"geoPosition.coordinates": "2dsphere"
+	});
+	console.log(JSON.stringify(Citoyens.find({'geoPosition.coordinates': {
+							$nearSphere: {
+									$geometry: {
+											type: "Point",
+											coordinates: [latlng.longitude, latlng.latitude]
+									},
+									$maxDistance: radius
+							}}},{_disableOplog: true,fields:{pwd:0}}).fetch()));
+	return Citoyens.find({'geoPosition.coordinates': {
+							$nearSphere: {
+									$geometry: {
+											type: "Point",
+											coordinates: [latlng.longitude, latlng.latitude]
+									},
+									$maxDistance: radius
+							}}},{_disableOplog: true,fields:{pwd:0}});
+});
+
 
 Meteor.publish('users', function() {
 	if (!this.userId) {

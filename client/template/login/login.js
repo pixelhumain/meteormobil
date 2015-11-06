@@ -7,7 +7,6 @@ Template.login.onCreated(function () {
 });
 
 Template.login.onRendered(function () {
-  //Session.set('error',null);
   templateDictionary.set( 'error', false );
 });
 
@@ -17,23 +16,29 @@ Template.login.events({
     var email = event.target.email.value;
     var password = event.target.password.value;
     if(!email || !password){
-      //Session.set('error', 'Error Fields.');
       templateDictionary.set( 'error', 'you do not complete all fields.' );
       return;
     }
-    //Session.set('loading-logging',true);
+
+    var isValidEmail = function(val, field) {
+      var emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
+      if (emailTest.test(val) == false) {
+        templateDictionary.set( 'error', 'Email not correct' );
+        return false;
+      }else{
+        return true;
+      }
+    }
+    if(!isValidEmail(email)){
+      return;
+    }
     templateDictionary.set( 'loading-logging', true );
     Meteor.loginAsPixel(email,password,function(error){
       if(!error) {
-        //Session.set('error',null);
-        //Session.set('loading-logging',false);
         templateDictionary.set( 'loading-logging', false );
         templateDictionary.set( 'error', null );
         Router.go('/');
       }else{
-        //Session.set('loading-logging',false);
-        //Session.set('error',error.reason);
-        //console.log(error);
         templateDictionary.set( 'loading-logging', false );
         templateDictionary.set( 'error', error.error );
         return null;
@@ -43,27 +48,22 @@ Template.login.events({
 });
 Template.login.helpers({
   loadingLogging: function () {
-    //return Session.get('loading-logging');
     return templateDictionary.get( 'loading-logging' );
   },
   error: function () {
-    //return Session.get('error');
     return templateDictionary.get( 'error' );
   },
 });
 
 Template.login.onCreated(function () {
-  //Session.set('error',null);
   templateDictionary.set( 'error', false );
   templateDictionary.set( 'loading-signup', false );
   templateDictionary.set( 'cities', null );
-
 });
 
 Template.signin.onRendered(function () {
-  //Session.set('error',null);
-  //Session.set('cities',null);
   templateDictionary.set( 'error', false );
+  templateDictionary.set( 'cities', null );
 });
 
 Template.signin.events({
@@ -84,7 +84,6 @@ Template.signin.events({
           console.log( error );
         } else {
           console.log( JSON.stringify(response));
-          //Session.set('cities',response.data);
           templateDictionary.set( 'cities', response.data );
           return;
         }
@@ -95,8 +94,6 @@ Template.signin.events({
 'keyup #codepostal, change #codepostal': function(event,template){
   if(event.currentTarget.value.length==5){
     Meteor.call('getcitiesbypostalcode',event.currentTarget.value,function(error, data){
-      //console.log( JSON.stringify(data));
-      //Session.set('cities',data);
       templateDictionary.set( 'cities', data);
       return;
     })
@@ -112,14 +109,12 @@ Template.signin.events({
 }
 );*/
 }else{
-  //Session.set('cities',null);
   templateDictionary.set( 'cities', null );
   return;
 }
 },
 'submit .signup-form': function (event,template) {
   event.preventDefault();
-  //Session.set('error', null);
   templateDictionary.set( 'error', null );
   var trimInput = function(val) {
     return val.replace(/^\s*|\s*$/g, "");
@@ -135,16 +130,24 @@ Template.signin.events({
   }
 
   if(!email || !password || !repassword || !name || !codepostal || !city){
-    //Session.set('error', 'Error Fields.');
     templateDictionary.set( 'error', 'you do not complete all fields.' );
     return;
+  }
+
+  var isValidEmail = function(val, field) {
+    var emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
+    if (emailTest.test(val) == false) {
+      templateDictionary.set( 'error', 'Email not correct' );
+      return false;
+    }else{
+      return true;
+    }
   }
 
   var isValidCodepostal = function(val, field) {
     if (val.length === 5) {
       return true;
     } else {
-      //Session.set('error', 'Error Postcode.');
       templateDictionary.set( 'error', 'Postcode must be 5 digits.' );
       return false;
     }
@@ -154,7 +157,6 @@ Template.signin.events({
     if (val.length >= 6) {
       return true;
     } else {
-      //Session.set('error', 'Name Too short.');
       templateDictionary.set( 'error', 'Name is Too short.' );
       return false;
     }
@@ -164,12 +166,15 @@ Template.signin.events({
     if (val.length > 7) {
       return true;
     } else {
-      //Session.set('error', 'Password Too short.');
       templateDictionary.set( 'error', 'Password is Too short.' );
       return false;
     }
   }
+
   if(!isValidName(name)){
+    return;
+  }
+  if(!isValidEmail(email)){
     return;
   }
   if (!isValidPassword(password)){
@@ -179,7 +184,6 @@ Template.signin.events({
     return;
   }
   if(password != repassword){
-    //Session.set('error','Not the same password');
     templateDictionary.set( 'error', 'Not the same password' );
     return;
   }
@@ -194,29 +198,21 @@ Template.signin.events({
   //numero insee
   user.city = city;
 
-  //verifier email et unique
-  //Session.set('error',null);
-  //Session.set('loading-signup',true);
   templateDictionary.set( 'loading-signup', true );
   templateDictionary.set( 'error', null );
   Meteor.call("createUserAccount",user, function (error) {
     if(error){
       console.log(error.error);
-      //Session.set('error',error.error);
       templateDictionary.set( 'error', error.error );
     }else{
       Meteor.loginAsPixel(email,password,function(err){
         if(!err) {
-          //Session.set('error',null);
-          //Session.set('loading-signup',false);
           templateDictionary.set( 'loading-signup', false );
           templateDictionary.set( 'error', null );
           Router.go('/');
         }else{
-          //Session.set('loading-signup',false);
-          //Session.set('error',err);
           templateDictionary.set( 'loading-signup', false );
-          templateDictionary.set( 'error', err );
+          templateDictionary.set( 'error', err.error );
           return false;
         }
       });
@@ -227,15 +223,12 @@ Template.signin.events({
 
 Template.signin.helpers({
   loadingLogging: function () {
-    //return Session.get('loading⁻signup');
     return templateDictionary.get( 'loading⁻signup' );
   },
   error: function () {
-    ///return Session.get('error');
     return templateDictionary.get( 'error' );
   },
   city: function(){
-    //return Session.get('cities');
     return templateDictionary.get( 'cities' );
   }
 });

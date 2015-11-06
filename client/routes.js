@@ -8,6 +8,19 @@ Router.map(function() {
   this.route('home', {
     path: '/',
     waitOn: function() {
+
+      let radius = Session.get('radius') ? Session.get('radius') : 25000;
+      let GPSstart = Session.get('GPSstart');
+      if (GPSstart) {
+        let latlng = Location.getReactivePosition();
+        if(latlng){
+          Meteor.subscribe('citoyenOnlineProx', {
+            latitude: parseFloat(latlng.latitude),
+            longitude: parseFloat(latlng.longitude)
+          }, radius);
+        }
+      }
+
       return Meteor.subscribe('citoyen');
     }
   });

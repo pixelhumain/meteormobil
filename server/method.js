@@ -12,8 +12,17 @@ Meteor.methods({
     check(user.codepostal, String);
     check(user.city, String);
 
-    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-    Match.test(user.email, re);
+    var passwordTest = new RegExp("(?=.{8,}).*", "g");
+    if (passwordTest.test(user.password) == false) {
+      throw new Meteor.Error("Your password is too weak!");
+    }
+
+    var emailTest = new RegExp(/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/);
+    if (emailTest.test(user.email) == false) {
+      throw new Meteor.Error("Email not correct");
+    }
+
+
     console.log("email match "+user.email+" " + JSON.stringify(Citoyens.find({email: user.email}).count()));
     if (Citoyens.find({email: user.email}).count() == 0) {
 
@@ -41,297 +50,297 @@ Meteor.methods({
           type: "Point",
           coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
         }});
-      let userId = Citoyens.insert({
-        name: user.name,
-        email: user.email,
-        pwd: pswdDigest,
-        created: new Date(),
-        address: {
-          addressLocality: insee.alternateName,
-          codeInsee: insee.insee,postalCode:
-          insee.cp
-        },
-        geo: {
-          latitude: insee.geo.latitude,
-          longitude: insee.geo.longitude
-        },
-        geoPosition: {
-          type: "Point",
-          coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
-        }});
-        return userId;
-      }else{
-        throw new Meteor.Error("Email not unique");
-      }
-
-    },
-    userup: function(geo) {
-      check(geo, {longitude:Number,latitude:Number});
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
-      if (Meteor.users.update({
-        _id: this.userId
-      }, {
-        $set: {
-          'profile.loc': {
-            type: "Point",
-            'coordinates': [parseFloat(geo.longitude), parseFloat(geo.latitude)]
-          }
-        }
-      })) {
-        console.log('update user web geo' + JSON.stringify({
-          latitude: parseFloat(geo.latitude),
-          longitude: parseFloat(geo.longitude)
-        }));
-        return true;
-      } else {
-        console.log('error update user web geo' + JSON.stringify({
-          latitude: parseFloat(geo.latitude),
-          longitude: parseFloat(geo.longitude)
-        }));
-        return false;
-      }
-      this.unblock();
-    },
-    settingRadius: function(radius) {
-      check(radius, Number);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
-      if (Meteor.users.update({
-        _id: this.userId
-      }, {
-        $set: {
-          type: "Number",
-          'profile.radius': parseInt(radius)
-        }
-      })) {
-        console.log('update radius web geo' + JSON.stringify(parseInt(radius)));
-        return true;
-      } else {
-        console.log('error update radius web geo' + JSON.stringify(parseInt(radius)));
-      }
-    },
-    settingNotifications: function(notifications) {
-      check(notifications, Boolean);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
-      if (Meteor.users.update({
-        _id: this.userId
-      }, {
-        $set: {
-          type: "Boolean",
-          'profile.notifications': notifications
-        }
-      })) {
-        console.log('update notifications ' + JSON.stringify(notifications));
-        return true;
-      } else {
-        console.log('error update notifications ' + JSON.stringify(notifications));
-      }
-    },
-    geoinsert: function(requestData) {
-      check(requestData, Match.Any);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
-      if (GeoLog.insert(requestData)) {
-        return true;
-      }
-    },
-    pushphoto: function(latLng,photoId) {
-      //check(latLng, {longitude:Number,latitude:Number});
-      check(photoId, String);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
-      var userradius = Meteor.users.findOne({
-        _id: this.userId
-      }, {
-        fields: {
-          "profile.radius": 1
-        }
-      });
-
-      var userfriends = Meteor.users.findOne({
-        _id: this.userId,
-        'profile.friends.status':'friend'
-      }, {
-        fields: {
-          "profile.friends": 1
-        }
-      });
-
-      if(userradius && userradius.profile && userradius.profile.radius){
-        var radius = parseInt(userradius.profile.radius);
-      }else{
-        var radius = 25000;
-        console.log('push radius default ' + JSON.stringify(radius));
-      }
-
-      if(userfriends && userfriends.profile && userfriends.profile.friends){
-        var favoris = userfriends.profile.friends.map(function(p) {
-          return p._id
-        });
-        console.log('push favoris ' + JSON.stringify(favoris));
-      }else{
-        var favoris = [];
-      }
-
-      Meteor.users._ensureIndex({
-        "profile.loc": "2dsphere"
-      });
-      var usernoti = Meteor.users.find({
-        "profile.loc": {
-          $nearSphere: {
-            $geometry: {
-              type: "Point",
-              coordinates: [latLng.lng, latLng.lat]
-            },
-            $maxDistance: radius
-          }
-        },
-        "profile.notifications": true,
-        "_id": {
-          $ne: this.userId
-        }
-      }, {
-        fields: {
-          _id: 1
-        }
-      });
-      var userIds = usernoti.map(function(p) {
-        return p._id
-      });
-
-      var mergedId = _.union( userIds, favoris);
-      console.log('push user ' + JSON.stringify(userIds));
-      console.log('push mergedId ' + JSON.stringify(mergedId));
-      Push.debug = true;
-      if (userIds.length > 0) {
-        Push.send({
-          from: 'push',
-          title: 'Nouvelle photo',
-          text: 'Nouvelle photo de ' + userName(),
-          payload: {
-            title: 'Nouvelle photo',
-            photoId: photoId,
-            pushType: 'photo'
+        let userId = Citoyens.insert({
+          name: user.name,
+          email: user.email,
+          pwd: pswdDigest,
+          created: new Date(),
+          address: {
+            addressLocality: insee.alternateName,
+            codeInsee: insee.insee,postalCode:
+            insee.cp
           },
-          query: {
-            userId: {
-              $in: mergedId
+          geo: {
+            latitude: insee.geo.latitude,
+            longitude: insee.geo.longitude
+          },
+          geoPosition: {
+            type: "Point",
+            coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
+          }});
+          return userId;
+        }else{
+          throw new Meteor.Error("Email not unique");
+        }
+
+      },
+      userup: function(geo) {
+        check(geo, {longitude:Number,latitude:Number});
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        if (Meteor.users.update({
+          _id: this.userId
+        }, {
+          $set: {
+            'profile.loc': {
+              type: "Point",
+              'coordinates': [parseFloat(geo.longitude), parseFloat(geo.latitude)]
             }
           }
+        })) {
+          console.log('update user web geo' + JSON.stringify({
+            latitude: parseFloat(geo.latitude),
+            longitude: parseFloat(geo.longitude)
+          }));
+          return true;
+        } else {
+          console.log('error update user web geo' + JSON.stringify({
+            latitude: parseFloat(geo.latitude),
+            longitude: parseFloat(geo.longitude)
+          }));
+          return false;
+        }
+        this.unblock();
+      },
+      settingRadius: function(radius) {
+        check(radius, Number);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        if (Meteor.users.update({
+          _id: this.userId
+        }, {
+          $set: {
+            type: "Number",
+            'profile.radius': parseInt(radius)
+          }
+        })) {
+          console.log('update radius web geo' + JSON.stringify(parseInt(radius)));
+          return true;
+        } else {
+          console.log('error update radius web geo' + JSON.stringify(parseInt(radius)));
+        }
+      },
+      settingNotifications: function(notifications) {
+        check(notifications, Boolean);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        if (Meteor.users.update({
+          _id: this.userId
+        }, {
+          $set: {
+            type: "Boolean",
+            'profile.notifications': notifications
+          }
+        })) {
+          console.log('update notifications ' + JSON.stringify(notifications));
+          return true;
+        } else {
+          console.log('error update notifications ' + JSON.stringify(notifications));
+        }
+      },
+      geoinsert: function(requestData) {
+        check(requestData, Match.Any);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        if (GeoLog.insert(requestData)) {
+          return true;
+        }
+      },
+      pushphoto: function(latLng,photoId) {
+        //check(latLng, {longitude:Number,latitude:Number});
+        check(photoId, String);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        var userradius = Meteor.users.findOne({
+          _id: this.userId
+        }, {
+          fields: {
+            "profile.radius": 1
+          }
         });
-      }
-    },
-    cfsbase64tos3up: function(photo,str,type,idType) {
-      check(photo, Match.Any);
-      check(str, Match.Any);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
-      }
+
+        var userfriends = Meteor.users.findOne({
+          _id: this.userId,
+          'profile.friends.status':'friend'
+        }, {
+          fields: {
+            "profile.friends": 1
+          }
+        });
+
+        if(userradius && userradius.profile && userradius.profile.radius){
+          var radius = parseInt(userradius.profile.radius);
+        }else{
+          var radius = 25000;
+          console.log('push radius default ' + JSON.stringify(radius));
+        }
+
+        if(userfriends && userfriends.profile && userfriends.profile.friends){
+          var favoris = userfriends.profile.friends.map(function(p) {
+            return p._id
+          });
+          console.log('push favoris ' + JSON.stringify(favoris));
+        }else{
+          var favoris = [];
+        }
+
+        Meteor.users._ensureIndex({
+          "profile.loc": "2dsphere"
+        });
+        var usernoti = Meteor.users.find({
+          "profile.loc": {
+            $nearSphere: {
+              $geometry: {
+                type: "Point",
+                coordinates: [latLng.lng, latLng.lat]
+              },
+              $maxDistance: radius
+            }
+          },
+          "profile.notifications": true,
+          "_id": {
+            $ne: this.userId
+          }
+        }, {
+          fields: {
+            _id: 1
+          }
+        });
+        var userIds = usernoti.map(function(p) {
+          return p._id
+        });
+
+        var mergedId = _.union( userIds, favoris);
+        console.log('push user ' + JSON.stringify(userIds));
+        console.log('push mergedId ' + JSON.stringify(mergedId));
+        Push.debug = true;
+        if (userIds.length > 0) {
+          Push.send({
+            from: 'push',
+            title: 'Nouvelle photo',
+            text: 'Nouvelle photo de ' + userName(),
+            payload: {
+              title: 'Nouvelle photo',
+              photoId: photoId,
+              pushType: 'photo'
+            },
+            query: {
+              userId: {
+                $in: mergedId
+              }
+            }
+          });
+        }
+      },
+      cfsbase64tos3up: function(photo,str,type,idType) {
+        check(photo, Match.Any);
+        check(str, Match.Any);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
 
 
-      var fsFile = new FS.File();
-      fsFile.attachData(photo,{'type':'image/jpeg'});
-      fsFile.extension('jpg');
-      fsFile.name(str);
-      fsFile.metadata = {owner: this.userId,type:type,id:idType};
-      fsFile.on('error', function () {
-        console.log("There was a problem storing ");
-      });
-      fsFile.on("uploaded", function () {
+        var fsFile = new FS.File();
+        fsFile.attachData(photo,{'type':'image/jpeg'});
+        fsFile.extension('jpg');
+        fsFile.name(str);
+        fsFile.metadata = {owner: this.userId,type:type,id:idType};
+        fsFile.on('error', function () {
+          console.log("There was a problem storing ");
+        });
+        fsFile.on("uploaded", function () {
+          console.log("Done uploading!");
+        });
         console.log("Done uploading!");
+        var photoret=Photosimg.insert(fsFile);
+        console.log('photoret ' + photoret._id);
+        console.log("Done uploading ");
+        return photoret._id;
+      },
+      deletePhoto: function(photoId) {
+        check(photoId, String);
+        if (!this.userId) {
+          throw new Meteor.Error("not-authorized");
+        }
+        var photo = Documents.findOne({
+          id: photoId
+        }, {
+          "fields": {
+            objId: 1
+          }
+        });
+        if (photo && photo.objId) {
+          /*var s3 = new AWS.S3();
+          var params = {
+          Bucket: Meteor.settings.aws.bucket,
+          Key: photo.urlimage
+        };
+        s3.deleteObject(params, function(err, data) {
+        if (err) console.log(err, err.stack); // error
+        else console.log(); // deleted
+      })*/
+      News.remove({
+        _id: new Mongo.ObjectID(photoId),
+        author: this.userId
       });
-      console.log("Done uploading!");
-      var photoret=Photosimg.insert(fsFile);
-      console.log('photoret ' + photoret._id);
-      console.log("Done uploading ");
-      return photoret._id;
-    },
-    deletePhoto: function(photoId) {
-      check(photoId, String);
-      if (!this.userId) {
-        throw new Meteor.Error("not-authorized");
+      Documents.remove({
+        id: photoId,
+        author: this.userId
+      });
+      Photosimg.remove({_id:photo.objId})
+    }else{
+      News.remove({
+        _id: new Mongo.ObjectID(photoId),
+        author: this.userId
+      });
+    }
+  },
+  'likePhoto': function(photoId) {
+    check(photoId, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    if (News.findOne({
+      _id: new Mongo.ObjectID(photoId),
+      likes: {
+        $in: [this.userId]
       }
-      var photo = Documents.findOne({
-        id: photoId
+    })) {
+      News.update({
+        _id: new Mongo.ObjectID(photoId)
       }, {
-        "fields": {
-          objId: 1
+        $pull: {
+          likes: this.userId
+        }
+      })
+    } else {
+      News.update({
+        _id: new Mongo.ObjectID(photoId)
+      }, {
+        $push: {
+          likes: this.userId
         }
       });
-      if (photo && photo.objId) {
-        /*var s3 = new AWS.S3();
-        var params = {
-        Bucket: Meteor.settings.aws.bucket,
-        Key: photo.urlimage
-      };
-      s3.deleteObject(params, function(err, data) {
-      if (err) console.log(err, err.stack); // error
-      else console.log(); // deleted
-    })*/
-    News.remove({
-      _id: new Mongo.ObjectID(photoId),
-      author: this.userId
-    });
-    Documents.remove({
-      id: photoId,
-      author: this.userId
-    });
-    Photosimg.remove({_id:photo.objId})
-  }else{
-    News.remove({
-      _id: new Mongo.ObjectID(photoId),
-      author: this.userId
-    });
+
+      /*Push.send({
+      from: 'push',
+      title: 'Nouveau J\'aime',
+      text: 'Nouveau J\'aime de ' + userName(),
+      payload: {
+      title: 'Nouveau J\'aime',
+      photoId: photoId,
+      pushType: 'likePhoto'
+    },
+    query: {
+    userId: News.findOne({_id: new Mongo.ObjectID(photoId)},{fields:{author:1}}).author
   }
-},
-'likePhoto': function(photoId) {
-  check(photoId, String);
-
-  if (!this.userId) {
-    throw new Meteor.Error("not-authorized");
-  }
-
-  if (News.findOne({
-    _id: new Mongo.ObjectID(photoId),
-    likes: {
-      $in: [this.userId]
-    }
-  })) {
-    News.update({
-      _id: new Mongo.ObjectID(photoId)
-    }, {
-      $pull: {
-        likes: this.userId
-      }
-    })
-  } else {
-    News.update({
-      _id: new Mongo.ObjectID(photoId)
-    }, {
-      $push: {
-        likes: this.userId
-      }
-    });
-
-    /*Push.send({
-    from: 'push',
-    title: 'Nouveau J\'aime',
-    text: 'Nouveau J\'aime de ' + userName(),
-    payload: {
-    title: 'Nouveau J\'aime',
-    photoId: photoId,
-    pushType: 'likePhoto'
-  },
-  query: {
-  userId: News.findOne({_id: new Mongo.ObjectID(photoId)},{fields:{author:1}}).author
-}
 });*/
 }
 },

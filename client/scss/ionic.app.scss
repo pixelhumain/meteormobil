@@ -48,6 +48,7 @@ input, button, select, textarea {
 .bold {font-weight:bold;}
 .text-right {text-align: right;}
 .text-left {text-align: left;}
+.text-center {text-align: center;}
 .uppercase {text-transform:uppercase;}
 
 	$default-screen-background : '';
@@ -56,15 +57,15 @@ input, button, select, textarea {
 	.rubyonic-pane .ruby-button-clear {border:none; background:none;}
 
 
-.logo {padding:0; text-align: center;}
+.logo {padding:20px 0 0 0; text-align: center;}
 
 
 #iron-router-progress {
-    background-color : #F5E414;
-    box-shadow       : 0 0 5px #F5E414;
+    background-color : #E33551;
+    box-shadow       : 0 0 5px #E33551;
 }
 #iron-router-progress.spinner:before {
-    border-color : #F5E414;
+    border-color : #E33551;
 }
 
 
@@ -99,14 +100,14 @@ color: $dark;
 
 .bar.bar-dark .title {
     font-family: "Homestead";
-    color: #F5E414;
+    color: #E33551;
 		text-align: center;
 }
 
 .logo{
   text-align: center;
   img{
-    width:65%;
+    width:95%;
   }
 }
 
@@ -114,4 +115,10 @@ color: $dark;
   .input-label{
     width:10%;
   }
+}
+
+.bypixel{
+  height:25px;
+  margin-top:-50px;
+  position:relative;
 }

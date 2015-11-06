@@ -29,3 +29,7 @@ App.setPreference('StatusBarOverlaysWebView', 'false');
 App.setPreference('StatusBarBackgroundColor', '#000000');
 
 App.accessRule('*');
+/*App.accessRule('meteor.local/*');
+App.accessRule('*.communecter.org/*');
+App.accessRule('*.openstreetmap.org/*');
+App.accessRule('*.tile.thunderforest.com/*');*/
