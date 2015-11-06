@@ -1,20 +1,23 @@
 
 <template name="login">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">Pixel Humain</h1>
+  <h1 class="title">Communecter</h1>
   {{/contentFor}}
   {{#ionView view-title="Login" hide-nav-bar="true"}}
   {{#ionContent class="rubyonic-pane"}}
 
   <div class="logo">
-    <img src="/logo320.png" alt="" class="animated jello">
+    <img src="/logoL.jpg" alt="" class="animated jello">
+  </div>
+  <div class="animated fadeInLeft text-center">
+    <img src="http://qa.communecter.org/assets/76c9edd8/images/byPH.png" class="bypixel"/>
   </div>
 
   <form class="login-form">
     <div class="padding form-rb-plain">
       {{#if error}}
       <div class="card">
-        <div class="item item-text-wrap animated shake homestead">
+        <div class="item item-text-wrap animated shake homestead text-center">
           {{error}}
         </div>
       </div>
@@ -36,7 +39,7 @@
       <div class="animated fadeInUp padding">
         <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "loggin"}}</button>
       </div>
-      <div class="card animated fadeInUp padding homestead">{{_ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{_ "signin"}}</a>.</div>
+      <div class="animated fadeInUp padding homestead text-center">{{_ "create an account"}} <a href="{{pathFor 'signin'}}" class="homestead dark">{{_ "signin"}}</a>.</div>
     </div>
   </form>
   {{/ionContent}}
@@ -46,25 +49,28 @@
 
 <template name="signin">
   {{#contentFor "headerTitle"}}
-  <h1 class="title">Pixel Humain</h1>
+  <h1 class="title">Communecter</h1>
   {{/contentFor}}
   {{#ionView view-title="Login" hide-nav-bar="true"}}
   {{#ionContent class="rubyonic-pane"}}
 
   <div class="logo">
-    <img src="/logo320.png" alt="" class="animated jello">
+    <img src="/logoL.jpg" alt="" class="animated jello">
+  </div>
+  <div class="animated fadeInRight text-center">
+    <img src="http://qa.communecter.org/assets/76c9edd8/images/byPH.png" class="bypixel"/>
   </div>
 
   <form class="signup-form">
     <div class="padding form-rb-plain">
       {{#if error}}
       <div class="card">
-        <div class="item item-text-wrap animated shake homestead">
+        <div class="item item-text-wrap animated shake homestead text-center">
           {{error}}
         </div>
       </div>
       {{/if}}
-      <div class="animated fadeInLeft list">
+      <div class="animated fadeInRight list">
         <label class="item item-input">
           <div class="input-label">
             <i class="icon ion-person"></i>
@@ -110,10 +116,11 @@
       </div>
       {{#if city}}
       <div class="animated fadeInUp padding">
-        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">{{_ "signin"}}</button>
+        <button type="submit" class="button button-block button-positive {{#if loadingLogging}}animated infinite jello{{/if}}">
+          {{_ "signin"}}</button>
       </div>
       {{/if}}
-      <div class="card animated fadeInUp padding homestead">{{_ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{_ "loggin"}}.</a></div>
+      <div class="animated fadeInUp padding homestead text-center">{{_ "already have an account"}} <a href="{{pathFor 'login'}}" class="homestead dark">{{_ "loggin"}}.</a></div>
     </div>
   </form>
   {{/ionContent}}
