@@ -1,0 +1,39 @@
+<template name="listOrganizations">
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "organizations"}}</h1>
+  {{/contentFor}}
+  {{#contentFor "headerButtonLeft"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+  {{#ionView}}
+  {{#ionContent}}
+
+  <div class="padding">
+    <div class="list">
+      <div class="item item-divider">
+        <i class="ion-android-calendar"></i> {{_ "organizations"}} <span class="badge badge-dark">{{citoyen.countMemberOf}}</span>
+      </div>
+      {{#transition in="zoomIn" out="bounceOut"}}
+      {{#each citoyen.memberOf}}
+      <a class="item animated out" href="{{pathFor 'newsList' _id=this._id._str scope="organizations"}}">
+        <h2>{{name}}</h2>
+        <span class="badge badge-dark"><i class="icon ion-person"></i> {{countMembers}}</span>
+        {{#if geo}}
+        <p>
+          <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
+        </p>
+        {{/if}}
+      </a>
+      {{/each}}
+      {{/transition}}
+    </div>
+  </div>
+
+
+  {{/ionContent}}
+  {{/ionView}}
+</template>

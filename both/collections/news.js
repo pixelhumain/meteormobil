@@ -73,8 +73,7 @@ News.attachSchema(
       denyUpdate: true
     },
     type : {
-      type: String,
-      allowedValues: ['events']
+      type: String
     },
     tags : {
       type: [String],
@@ -88,7 +87,38 @@ News.attachSchema(
       type: Object
     },
     "scope.events" : {
-      type: [String]
+      type: [String],
+      optional: true
+    },
+    "scope.projects" : {
+      type: [String],
+      optional: true
+    },
+    "scope.organizations" : {
+      type: [String],
+      optional: true
+    },
+    "scope.citoyens" : {
+      type: [String],
+      optional: true
     }
-})
+  })
 );
+
+News.helpers({
+  authorNews: function () {
+    return Citoyens.findOne({_id:new Mongo.ObjectID(this.author)});
+  },
+  docNews: function () {
+    return Documents.findOne({id:this._id._str});
+  },
+  likesCount : function () {
+    if (this.likes && this.likes.length) {
+      return this.likes.length;
+    }
+    return 0;
+  },
+  isAuthor () {
+    return this.author === Meteor.userId();
+  }
+});

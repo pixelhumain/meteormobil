@@ -1,6 +1,9 @@
 {
   "home":"Accueil",
   "events":"Evenements",
+  "projects":"Projets",
+  "citoyens":"Citoyens",
+  "organizations":"Organisations",
   "email":"Email",
   "password":"Mot de passe",
   "loggin":"S'identifier",
@@ -30,5 +33,14 @@
   "news-name":"Titre",
   "news-text":"Message",
   "edit a news":"Editer une news",
-  "edit":"Editer"
+  "edit":"Editer",
+  "Communecter Login Failed":"Échec de la connexion",
+  "Email not valid":"Email non valide",
+  "Email not unique":"Email déja présent",
+  "Not completed all fields":"Vous devez renseigner tous les champs",
+  "Postcode must be 5 digits":"le code postal doit être de 5 chiffres",
+  "Name is Too short":"Votre nom est trop court",
+  "Password is Too short":"Votre mot de passe est trop court",
+  "Not the same password":"Vous n'avez pas saisis le même mot de passe",
+  "are you sure you want to delete":"Etes-vous sûr que vous voulez supprimer ?"
 }

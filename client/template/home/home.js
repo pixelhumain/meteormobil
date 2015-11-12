@@ -1,58 +1,41 @@
 
- function userName() {
-    return Meteor.user().username || Meteor.user().profile.name;
-}
-
 
 Template.layout.events({
-  "click .logout": function (event) {
-      event.preventDefault();
-      Meteor.logout();
-      Router.go('/login');
+  "click .logout" (event) {
+    event.preventDefault();
+    Meteor.logout();
+    //Meteor.logoutOtherClients
+    Router.go('/login');
   }
 });
 
 Template.layout.helpers({
-    '_home': function () {
-      return  TAPi18n.__('home');
-    },
-    '_events': function () {
-      return  TAPi18n.__('events');
-    }
-  });
+  '_home' () {
+    return  TAPi18n.__('home');
+  },
+  '_events' () {
+    return  TAPi18n.__('events');
+  },
+  '_projects' () {
+    return  TAPi18n.__('projects');
+  },
+  '_organizations' () {
+    return  TAPi18n.__('organizations');
+  },
+  '_citoyens' () {
+    return  TAPi18n.__('citoyens');
+  },
+  citoyen () {
+    return Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())});
+  }
+});
 
 
 Template.home.helpers({
-    users: function () {
-      return Meteor.users.find({});
-    },
-    countUsers: function () {
-      return Meteor.users.find({}).count();
-    }
-  });
-
-  Template.listEvents.helpers({
-      users: function () {
-        return Meteor.users.find({});
-      },
-      countUsers: function () {
-        return Meteor.users.find({}).count();
-      },
-      citoyen: function () {
-        return Citoyens.findOne({});
-      },
-      events: function () {
-        return Events.find({});
-      },
-      countEvents: function () {
-        return Events.find({}).count();
-      },
-      isStart : function () {
-        let start = moment(this.startDate).toDate();
-        let now = moment().toDate();
-        return moment(start).isBefore(now); // True
-      },
-      countAttendees : function () {
-        return this.links && this.links.attendees && _.size(this.links.attendees);
-      }
-    });
+  users () {
+    return Meteor.users.find({});
+  },
+  countUsers () {
+    return Meteor.users.find({}).count();
+  }
+});

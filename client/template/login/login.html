@@ -3,14 +3,14 @@
   {{#contentFor "headerTitle"}}
   <h1 class="title">Communecter</h1>
   {{/contentFor}}
-  {{#ionView view-title="Login" hide-nav-bar="true"}}
+  {{#ionView}}
   {{#ionContent class="rubyonic-pane"}}
 
   <div class="logo">
     <img src="/logoL.jpg" alt="" class="animated jello">
   </div>
   <div class="animated fadeInLeft text-center">
-    <img src="http://qa.communecter.org/assets/76c9edd8/images/byPH.png" class="bypixel"/>
+    <img src="/byPH.png" class="bypixel"/>
   </div>
 
   <form class="login-form">
@@ -18,7 +18,7 @@
       {{#if error}}
       <div class="card">
         <div class="item item-text-wrap animated shake homestead text-center">
-          {{error}}
+          {{_ error}}
         </div>
       </div>
       {{/if}}
@@ -51,14 +51,14 @@
   {{#contentFor "headerTitle"}}
   <h1 class="title">Communecter</h1>
   {{/contentFor}}
-  {{#ionView view-title="Login" hide-nav-bar="true"}}
+  {{#ionView}}
   {{#ionContent class="rubyonic-pane"}}
 
   <div class="logo">
     <img src="/logoL.jpg" alt="" class="animated jello">
   </div>
   <div class="animated fadeInRight text-center">
-    <img src="http://qa.communecter.org/assets/76c9edd8/images/byPH.png" class="bypixel"/>
+    <img src="/byPH.png" class="bypixel"/>
   </div>
 
   <form class="signup-form">
@@ -66,7 +66,7 @@
       {{#if error}}
       <div class="card">
         <div class="item item-text-wrap animated shake homestead text-center">
-          {{error}}
+          {{_ error}}
         </div>
       </div>
       {{/if}}
