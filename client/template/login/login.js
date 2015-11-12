@@ -160,7 +160,7 @@ Template.signin.events({
   pageSession.set( 'error', null );
   //createUserAccount or createUserAccountRest
   console.log(user);
-  Meteor.call("createUserAccount",user, function (error) {
+  Meteor.call("createUserAccountRest",user, function (error) {
     if(error){
       console.log(error.error);
       pageSession.set( 'error', error.error );
