@@ -11,7 +11,7 @@ Documents.attachSchema(
     },
     type : {
       type : String,
-      allowedValues: ['events']
+      allowedValues: ['events','projects','citoyens','organizations']
     },
     collection : {
       type : String,
@@ -74,3 +74,9 @@ Documents.attachSchema(
       denyUpdate: true
     }
 }));
+
+Documents.helpers({
+  photoNews: function () {
+    return Photosimg.find({_id:this.objId});
+  }
+});

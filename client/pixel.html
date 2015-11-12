@@ -16,8 +16,11 @@
   {{/ionNavView}}
 
   {{#if currentUser}}
-  {{#ionTabs class="tabs-dark tabs-icon-left"}}
+  {{#ionTabs class="tabs-dark tabs-icon-only"}}
   {{> ionTab title=_home path="home" iconOff="home" iconOn="home"}}
+  {{> ionTab title=_projects path="listProjects" iconOff="ios-lightbulb-outline" iconOn="ios-lightbulb-outline"}}
+  {{> ionTab title=_citoyens path="listCitoyens" iconOff="person" iconOn="person"}}
+  {{> ionTab title=_organizations path="listOrganizations" iconOff="android-contacts" iconOn="android-contacts"}}
   {{> ionTab title=_events path="listEvents" iconOff="calendar" iconOn="calendar"}}
   {{/ionTabs}}
   {{/if}}

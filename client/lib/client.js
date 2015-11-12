@@ -1,5 +1,34 @@
 Meteor.startup(function () {
 
+  if (Meteor.isCordova) {
+    //contacts
+    //window.contacts = navigator.contacts;
+    //window.alert = navigator.notification.alert;
+    //window.confirm = navigator.notification.confirm;
+  }
+
+/*  if (Meteor.isCordova) {
+  var options = new ContactFindOptions();
+  options.filter = "";
+  options.multiple = true;
+  var fields = ["displayName", "name"];
+  var contacts = window.contacts.find(fields, onSuccess, onError, options);
+
+  function onSuccess(contacts) {
+    alert(JSON.stringify(contacts[0]));
+    alert(contacts.length + 'contacts'+ contacts[0].displayName);
+    for (var i = 0; i < contacts.length; i++) {
+      console.log("Display Name = " + contacts[i].displayName);
+    }
+  }
+
+  function onError(contactError) {
+    //alert("error");
+    console.log('onError!');
+  }
+}
+*/
+
   Session.setDefault('GPSstart', false);
 
   let language = window.navigator.userLanguage || window.navigator.language;
@@ -31,6 +60,7 @@ Meteor.startup(function () {
         console.log(pos);
       }, function(err){
         console.log(err);
+        Session.set('GPSstart', false);
         Session.set('geo',null);
       });
     }
@@ -41,24 +71,25 @@ Meteor.startup(function () {
     Session.set('GPSstart', false);
   }
 
-  var options = {
-    dialog: true
-  }
-
-  Location.getGPSState(success, failure, options);
+  Location.getGPSState(success, failure, {
+    dialog: false
+  });
 
   Template.registerHelper('distance',function (coordinates) {
     let geo = Location.getReactivePosition();
-    let rmetre=geolib.getDistance(
-      {latitude: parseFloat(coordinates.latitude), longitude: parseFloat(coordinates.longitude)},
-      {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)});
-      if(rmetre>1000){
-        var rkm=rmetre/1000;
-        return 	rkm+' km';
+    if(geo && geo.latitude){
+      let rmetre=geolib.getDistance(
+        {latitude: parseFloat(coordinates.latitude), longitude: parseFloat(coordinates.longitude)},
+        {latitude: parseFloat(geo.latitude), longitude: parseFloat(geo.longitude)});
+        if(rmetre>1000){
+          let rkm=rmetre/1000;
+          return 	rkm+' km';
+        }else{
+          return 	rmetre+' m';
+        }
       }else{
-        return 	rmetre+' m';
+        return false;
       }
-
     });
 
     Template.registerHelper('equals',
@@ -75,11 +106,11 @@ Meteor.startup(function () {
 
 Template.registerHelper('diffInText',
 function(start, end) {
-  var a = moment(start);
-  var b = moment(end);
-  var diffInMs = b.diff(a); // 86400000 milliseconds
-  var diffInDays = b.diff(a, 'days'); // 1 day
-  var diffInDayText=moment.duration(diffInMs).humanize();
+  let a = moment(start);
+  let b = moment(end);
+  let diffInMs = b.diff(a); // 86400000 milliseconds
+  let diffInDays = b.diff(a, 'days'); // 1 day
+  let diffInDayText=moment.duration(diffInMs).humanize();
   return diffInDayText;
 }
 );
@@ -89,7 +120,7 @@ function(start, end) {
 
 Tracker.autorun(function() {
   if (Meteor.userId()) {
-    Meteor.subscribe('users');
+    //Meteor.subscribe('users');
   }
 });
 

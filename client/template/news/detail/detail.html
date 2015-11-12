@@ -1,4 +1,4 @@
-<template name="newsDetailEvents">
+<template name="newsDetail">
   {{#contentFor "headerButtonLeft"}}
   {{>ionNavBackButton}}
   {{/contentFor}}
@@ -13,36 +13,42 @@
 
   {{#ionView}}
   {{#ionContent}}
-  {{#with event}}
   <div class="list card">
-    {{#each news}}
+    {{#with scope.new}}
     <div class="item">
-      {{> avatar userId=authorNews._id._str size='small' shape='rounded' class=''}}
-      <h2>{{authorNews.name}}</h2>
-      <p><i class="icon ion-clock"></i> {{livestamp created}}</p>
+      <h2>{{#if name}}{{name}}{{else}}{{authorNews.name}}{{/if}}</h2>
+      <p><i class="icon ion-clock"></i> {{livestamp created}} <i class="icon ion-person"></i>  {{authorNews.name}}</p>
     </div>
+    {{#if docNews.photoNews}}
     <div class="item item-body">
-      {{#with docNews}}
-      {{#each photoNews}}
+      {{#each docNews.photoNews}}
       <img src="{{this.url store='photosLarge' uploading='/default.png' storing='/default.png'}}" class="full-image"  />
       {{/each}}
-      {{/with}}
     </div>
+    {{/if}}
+    {{#if text}}
+    <div class="item item-body">
+      {{text}}
+    </div>
+    {{/if}}
     <div class="item tabs tabs-secondary tabs-icon-left">
-      <a class="tab-item like-photo" id="{{_id}}" href="#">
+      <a class="tab-item like-photo" href="#">
         <i class="icon ion-thumbsup"></i>
         {{likesCount}} {{_ "like"}}
       </a>
       {{#if isAuthor}}
-      <a class="tab-item delete-photo" id="{{_id}}" href="#">
+      <a class="tab-item delete-photo" href="#">
         <i class="icon ion-trash-a"></i>
         {{_ "delete"}}
       </a>
+      <a class="tab-item" href="{{pathFor "newsEdit" _id=scope._id._str newsId=_id._str scope=type}}">
+        <i class="icon ion-edit"></i>
+        {{_ "edit"}}
+      </a>
       {{/if}}
     </div>
-      {{/each}}
+      {{/with}}
   </div>
-  {{/with}}
   {{/ionContent}}
   {{/ionView}}
 </template>

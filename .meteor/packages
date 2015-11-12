@@ -20,7 +20,7 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 accounts-ui
 
 iron:router
-jparker:crypto-sha256
+#jparker:crypto-sha256
 
 logging
 reload
@@ -69,3 +69,5 @@ webtempest:animate
 meteoric:autoform-ionic
 reactive-dict
 #bevanhunt:leaflet
+meteorhacks:subs-manager
+sha

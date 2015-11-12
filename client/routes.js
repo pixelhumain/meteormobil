@@ -1,7 +1,12 @@
 
+
 Router.configure({
-  loadingTemplate: 'loading'
+  layoutTemplate: "layout",
+  loadingTemplate: "loading"
 });
+
+var homeSubs = new SubsManager({cacheLimit: 9999, expireIn: 9999});
+var singleSubs = new SubsManager({cacheLimit: 20, expireIn: 3});
 
 Router.map(function() {
 
@@ -9,7 +14,7 @@ Router.map(function() {
     path: '/',
     waitOn: function() {
 
-      let radius = Session.get('radius') ? Session.get('radius') : 25000;
+      /*let radius = Session.get('radius') ? Session.get('radius') : 25000;
       let GPSstart = Session.get('GPSstart');
       if (GPSstart) {
         let latlng = Location.getReactivePosition();
@@ -19,9 +24,9 @@ Router.map(function() {
             longitude: parseFloat(latlng.longitude)
           }, radius);
         }
-      }
+      }*/
+Meteor.subscribe('users');
 
-      return Meteor.subscribe('citoyen');
     }
   });
 
@@ -35,65 +40,107 @@ Router.map(function() {
     path: '/signin'
   });
 
+  this.route("listProjects", {
+    path: '/projects',
+    template: "listProjects",
+    loadingTemplate: 'loading',
+    waitOn: function() {
+      Meteor.subscribe('citoyen');
+      Meteor.subscribe('citoyenProjects');
+    }
+  });
+
+  this.route("listOrganizations", {
+    path: '/organizations',
+    template: "listOrganizations",
+    loadingTemplate: 'loading',
+    waitOn: function() {
+      Meteor.subscribe('citoyen');
+      Meteor.subscribe('citoyenOrganizations');
+    }
+  });
+
+  this.route("listCitoyens", {
+    path: '/citoyens',
+    template: "listCitoyens",
+    loadingTemplate: 'loading',
+    waitOn: function() {
+      Meteor.subscribe('citoyen');
+      Meteor.subscribe('citoyenCitoyens');
+    }
+  });
+
   this.route("listEvents", {
     path: '/events',
     template: "listEvents",
     loadingTemplate: 'loading',
     waitOn: function() {
-      return Meteor.subscribe('citoyen');
+      Meteor.subscribe('citoyen');
+      Meteor.subscribe('citoyenEvents');
     }
   });
 
-  this.route("newsListEvents", {
-    template: "newsListEvents",
-    path: 'news/event/:_id',
+  this.route("newsList", {
+    template: "newsList",
+    path: 'news/:scope/:_id',
     loadingTemplate: 'loading',
-    waitOn: function() {
-      return Meteor.subscribe('newsListEvents', this.params._id);
-    }
-  });
-
-
-  this.route("newsDetailEvents", {
-    template: "newsDetailEvents",
-    path: 'news/event/:_id/new/:newsId',
-    waitOn: function() {
-      return Meteor.subscribe('newsDetailEvents', this.params._id, this.params.newsId);
-    }
-  });
-
-  this.route("newsAddEvent", {
-    template: "newsAddEvent",
-    path: 'news/event/:_id/add',
     data: function() {
-      Session.set('eventId', this.params._id);
+      Session.set('scopeId', this.params._id);
+      Session.set('scope', this.params.scope);
       return null;
     },
     waitOn: function() {
-      //return Meteor.subscribe('newsAddEvent', this.params._id);
+      Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
+      return singleSubs.subscribe('newsList', this.params.scope, this.params._id);
     }
   });
 
-  this.route("newsEditEvent", {
-    template: "newsEditEvent",
-    path: 'news/event/:_id/edit/:newsId',
+
+  this.route("newsDetail", {
+    template: "newsDetail",
+    path: 'news/:scope/:_id/new/:newsId',
     data: function() {
-      Session.set('eventId', this.params._id);
+      Session.set('scopeId', this.params._id);
+      Session.set('scope', this.params.scope);
       return null;
     },
     waitOn: function() {
-      //return Meteor.subscribe('newsEditEvent', this.params.newsId);
+      Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
+      return Meteor.subscribe('newsDetail', this.params.newsId);
+    }
+  });
+
+  this.route("newsAdd", {
+    template: "newsAdd",
+    path: 'news/:scope/:_id/add',
+    data: function() {
+      Session.set('scopeId', this.params._id);
+      Session.set('scope', this.params.scope);
+      return null;
+    },
+    waitOn: function() {
+    }
+  });
+
+  this.route("newsEdit", {
+    template: "newsEdit",
+    path: 'news/:scope/:_id/edit/:newsId',
+    data: function() {
+      Session.set('scopeId', this.params._id);
+      Session.set('scope', this.params.scope);
+      return null;
+    },
+    waitOn: function() {
+      Meteor.subscribe('scopeDetail', this.params.scope, this.params._id);
+      return Meteor.subscribe('newsDetail', this.params.newsId);
     }
   });
 
 });
 
-Router.configure({
-  layoutTemplate: "layout"
-});
 
 let ensurePixelSignin = function () {
-  if (Meteor.user() && Meteor.user().username) {
+  if (Meteor.user() && Meteor.user().profile && Meteor.user().profile.pixelhumain) {
     this.next();
   } else {
     this.render('login');

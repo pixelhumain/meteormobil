@@ -30,59 +30,15 @@ Citoyens = new Meteor.Collection("citoyens", {idGeneration : 'MONGO'});
 //avec un index dessus Citoyens._ensureIndex({'geoPosition.coordinates':'2dsphere'});
 /*
 {
-  "loc": {
-    "type" : "Point",
-    "coordinates" : [
-        -84.465176,
-        39.227033
-    ]
-  }
+"loc": {
+"type" : "Point",
+"coordinates" : [
+-84.465176,
+39.227033
+]
+}
 }*/
-//doublon avec geoPosition
 
-var GeoCoordinates = new SimpleSchema({
-  longitude: {
-    type: Number,
-    decimal: true
-  },
-  latitude: {
-    type: Number,
-    decimal: true
-  }
-});
-
-var GeoPosition = new SimpleSchema({
-  type : {
-    type : String,
-    allowedValues: ['Point']
-  },
-  coordinates: {
-    type: [Number],
-    decimal: true
-  }
-});
-
-//streetAddress et addressCountry ne sont pas remplis actuellement
-var PostalAddress = new SimpleSchema({
-  addressLocality: {
-    type : String,
-  },
-  streetAddress: {
-    type : String,
-    optional: true
-  },
-  addressCountry: {
-    type : String,
-    optional: true
-  },
-  codeInsee: {
-    type : Number,
-  },
-  postalCode: {
-    type : Number,
-    min:5
-  }
-});
 
 //Social
 var socialNetwork = new SimpleSchema({
@@ -184,6 +140,10 @@ Citoyens.attachSchema(
     roles : {
       type : rolesCitoyen
     },
+    links : {
+      type : linksCitoyensOrganizations,
+      optional:true
+    },
     created: {
       type: Date,
       autoValue: function() {
@@ -200,3 +160,119 @@ Citoyens.attachSchema(
       denyUpdate: true
     }
   }));
+
+  Citoyens.helpers({
+    knows () {
+      //this.links.knows
+      if(this && this.links && this.links.knows){
+        let knowsIds = _.map(this.links.knows, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        return Citoyens.find({_id:{$in:knowsIds}});
+      }
+    },
+    countKnows () {
+      if(this && this.links && this.links.knows){
+        let knowsIds = _.map(this.links.knows, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        return Citoyens.find({_id:{$in:knowsIds}}).count();
+      }
+    },
+    knowsOrganizations () {
+      //this.links.knows
+      if(this && this.links && this.links.knows){
+        let knowsIds = _.map(this.links.knows, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        return Organizations.find({_id:{$in:knowsIds}});
+      }
+    },
+    countKnowsOrganizations () {
+      if(this && this.links && this.links.knows){
+        let knowsIds = _.map(this.links.knows, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        return Organizations.find({_id:{$in:knowsIds}}).count();
+      }
+    },
+    memberOf () {
+      //this.links.memberOf
+      if(this && this.links && this.links.memberOf){
+        let memberOfIds = _.map(this.links.memberOf, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Organizations.find({_id:{$in:memberOfIds}});
+      }
+    },
+    countMemberOf () {
+      //this.links.memberOf
+      if(this && this.links && this.links.memberOf){
+        let memberOfIds = _.map(this.links.memberOf, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Organizations.find({_id:{$in:memberOfIds}}).count();
+      }
+    },
+    events () {
+      //this.links.events
+      if(this && this.links && this.links.events){
+        let eventsIds = _.map(this.links.events, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Events.find({_id:{$in:eventsIds},endDate:{$gte:inputDate}});
+      }
+    },
+    countEvents () {
+      //this.links.events
+      if(this && this.links && this.links.events){
+        let eventsIds = _.map(this.links.events, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Events.find({_id:{$in:eventsIds},endDate:{$gte:inputDate}}).count();
+      }
+    },
+    projects () {
+      //this.links.projects
+      if(this && this.links && this.links.projects){
+        let projectsIds = _.map(this.links.projects, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Projects.find({_id:{$in:projectsIds},endDate:{$gte:inputDate}});
+      }
+    },
+    countProjects () {
+      //this.links.projects
+      if(this && this.links && this.links.projects){
+        let projectsIds = _.map(this.links.projects, function(num, key){
+          let objectId = new Mongo.ObjectID(key);
+          return objectId;
+        });
+        var inputDate = new Date();
+        return Projects.find({_id:{$in:projectsIds},endDate:{$gte:inputDate}}).count();
+      }
+    },
+    news () {
+      return News.find({'scope.citoyens':{$in:[Router.current().params._id]}},{sort: {"created": -1},limit: Session.get('limit') });
+    },
+    countNews () {
+      return News.find({'scope.citoyens':{$in:[Router.current().params._id]}}).count();
+    },
+    new () {
+      return News.findOne({_id:new Mongo.ObjectID(Router.current().params.newsId)});
+    }
+  });

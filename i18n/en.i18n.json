@@ -1,6 +1,9 @@
 {
 "home":"Home",
 "events":"Events",
+"projects":"Project",
+"citoyens":"Citoyens",
+"organizations":"Organizations",
 "email":"Email",
 "password":"Password",
 "loggin":"Sign in",
@@ -30,5 +33,14 @@
 "news-name":"Title",
 "news-text":"Message",
 "edit a news":"Edit a news",
-"edit":"Edit"
+"edit":"Edit",
+"Communecter Login Failed":"Communecter Login Failed",
+"Email not valid":"Email not valid",
+"Email not unique":"Email not unique",
+"Not completed all fields":"Not completed all fields",
+"Postcode must be 5 digits":"Postcode must be 5 digits",
+"Name is Too short":"Name is Too short",
+"Password is Too short":"Password is Too short",
+"Not the same password":"Not the same password",
+"are you sure you want to delete":"Are you sure you want to delete ?"
 }
