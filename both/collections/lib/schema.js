@@ -33,11 +33,12 @@ PostalAddress = new SimpleSchema({
     optional: true
   },
   codeInsee: {
-    type : Number,
+    type : String,
   },
   postalCode: {
-    type : Number,
-    min:5
+    type : String,
+    min:5,
+    max:9
   }
 });
 

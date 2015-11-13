@@ -3,6 +3,7 @@ Meteor.methods({
     console.log(user);
     check(user, Object);
     check(user.name, String);
+    check(user.username, String);
     check(user.email, String);
     check(user.password, String);
     check(user.codepostal, String);
@@ -18,7 +19,13 @@ Meteor.methods({
       throw new Meteor.Error("Email not valid");
     }
 
-    if (Citoyens.find({email: user.email}).count() == 0) {
+    if (Citoyens.find({email: user.email}).count() !== 0) {
+      throw new Meteor.Error("Email not unique");
+    }
+
+    if (Citoyens.find({username: user.username}).count() !== 0) {
+      throw new Meteor.Error("Username not unique");
+    }
 
       var pswdDigest = SHA256(user.email+user.password)
 
@@ -43,15 +50,14 @@ Meteor.methods({
           coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
         }});
         return userId;
-      }else{
-        throw new Meteor.Error("Email not unique");
-      }
+
 
     },
     createUserAccountRest: function(user){
       console.log(user);
       check(user, Object);
       check(user.name, String);
+      check(user.username, String);
       check(user.email, String);
       check(user.password, String);
       check(user.codepostal, String);
@@ -67,25 +73,22 @@ Meteor.methods({
         throw new Meteor.Error("Email not valid");
       }
 
-      if (Citoyens.find({email: user.email}).count() == 0) {
+      if (Citoyens.find({email: user.email}).count() !== 0) {
+        throw new Meteor.Error("Email not unique");
+      }
+
+      if (Citoyens.find({username: user.username}).count() !== 0) {
+        throw new Meteor.Error("Username not unique");
+      }
 
         let insee = Cities.findOne({insee: user.city});
 
-  /*
-  - name : string
-  - email : well formated email
-  - postalCode : existing postalCode
-  - geoPosLatitude : float
-  - geoPosLongitude : float
-  - pwd : non encrypted password
-  - city : String
-  - pendingUserId : String.
-  */
-  try {
+  //try {
     var response = HTTP.call( 'POST', 'http://qa.communecter.org/communecter/person/register', {
       params: {
         "name": user.name,
         "email": user.email,
+        "username" : user.username,
         "pwd": user.password,
         "cp": insee.cp,
         "city": insee.insee,
@@ -93,19 +96,17 @@ Meteor.methods({
         "geoPosLongitude": insee.geo.longitude
       }
     });
-
+    console.log(response);
     if(response.data.result && response.data.id){
       let userId = response.data.id;
       return userId;
     }else{
       throw new Meteor.Error(response.data.msg);
     }
-  } catch(e) {
+  /*} catch(e) {
     throw new Meteor.Error("Error server");
-  }
-}else{
-  throw new Meteor.Error("Email not unique");
-}
+  }*/
+
 
 },
 deletePhoto: function(photoId) {

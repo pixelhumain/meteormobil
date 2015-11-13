@@ -88,6 +88,7 @@ Template.signin.events({
   };
   let city;
   let email = trimInput(event.target.email.value);
+  let username = trimInput(event.target.username.value);
   let password = event.target.password.value;
   let repassword = event.target.repassword.value;
   let name = trimInput(event.target.name.value);
@@ -96,7 +97,7 @@ Template.signin.events({
     city = event.target.city.value;
   }
 
-  if(!email || !password || !repassword || !name || !codepostal || !city){
+  if(!email || !password || !repassword || !name || !codepostal || !city || !username){
     pageSession.set( 'error', 'Not completed all fields' );
     return;
   }
@@ -119,6 +120,15 @@ Template.signin.events({
     }
   };
 
+  const isValidUsername = ( val ) => {
+    if (val.length >= 6) {
+      return true;
+    } else {
+      pageSession.set( 'error', 'Username is Too short' );
+      return false;
+    }
+  };
+
   const isValidPassword = ( val ) => {
     if (val.length > 7) {
       return true;
@@ -130,6 +140,9 @@ Template.signin.events({
 
 
   if(!isValidName(name)){
+    return;
+  }
+  if(!isValidUsername(username)){
     return;
   }
   if(!isValidEmail(email)){
@@ -151,6 +164,7 @@ Template.signin.events({
   user.email = email;
   user.password = password;
   user.name = name;
+  user.username = username;
   user.repassword = repassword;
   user.codepostal = codepostal;
   //numero insee
@@ -162,6 +176,7 @@ Template.signin.events({
   console.log(user);
   Meteor.call("createUserAccountRest",user, function (error) {
     if(error){
+      pageSession.set( 'loading-signup', false );
       console.log(error.error);
       pageSession.set( 'error', error.error );
     }else{

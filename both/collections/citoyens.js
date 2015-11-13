@@ -1,45 +1,6 @@
 //Person
 Citoyens = new Meteor.Collection("citoyens", {idGeneration : 'MONGO'});
 
-/*
-"name" => array("name" => "name", "rules" => array("required")),
-"birthDate" => array("name" => "birthDate", "rules" => array("required")),
-"email" => array("name" => "email", "rules" => array("email")),
-"pwd" => array("name" => "pwd"),
-"address" => array("name" => "address"),
-"streetAddress" => array("name" => "address.streetAddress"),
-"postalCode" => array("name" => "address.postalCode"),
-"city" => array("name" => "address.codeInsee"),
-"addressLocality" => array("name" => "address.addressLocality"),
-"addressCountry" => array("name" => "address.addressCountry"),
-"geo" => array("name" => "geo"),
-"telephone" => array("name" => "telephone"),
-"tags" => array("name" => "tags"),
-"shortDescription" => array("name" => "shortDescription"),
-"facebookAccount" => array("name" => "socialNetwork.facebook"),
-"twitterAccount" => array("name" => "socialNetwork.twitter"),
-"gpplusAccount" => array("name" => "socialNetwork.googleplus"),
-"gitHubAccount" => array("name" => "socialNetwork.github"),
-"skypeAccount" => array("name" => "socialNetwork.skype"),
-"bgClass" => array("name" => "preferences.bgClass"),
-"bgUrl" => array("name" => "preferences.bgUrl"),
-"roles" => array("name" => "roles"),
-*/
-
-//Pour mongo GEOjson il faut un point avec longitude en premier
-//avec un index dessus Citoyens._ensureIndex({'geoPosition.coordinates':'2dsphere'});
-/*
-{
-"loc": {
-"type" : "Point",
-"coordinates" : [
--84.465176,
-39.227033
-]
-}
-}*/
-
-
 //Social
 var socialNetwork = new SimpleSchema({
   facebook: {
@@ -99,6 +60,10 @@ Citoyens.attachSchema(
   new SimpleSchema({
     name : {
       type : String
+    },
+    username : {
+      type : String,
+      unique: true
     },
     email : {
       type : String,
