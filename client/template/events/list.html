@@ -7,8 +7,11 @@
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
-
+  {{#if currentUser}}
+  <a href="{{ pathFor 'eventsAdd'}}" class="button button-clear">{{> ionIcon icon="ios-plus-empty"}}</a>
+  {{/if}}
   {{/contentFor}}
+
   {{#ionView}}
   {{#ionContent}}
 
@@ -33,6 +36,11 @@
           {{/if}}
           <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
         </p>
+        {{#if currentUser}}
+        {{#if isCreator}}
+        <a href="{{ pathFor 'eventsEdit' _id=_id._str}}" class="button button-clear">{{> ionIcon icon="compose"}}</a>
+        {{/if}}
+        {{/if}}
       </a>
       {{/each}}
       {{/transition}}
@@ -41,4 +49,79 @@
 
   {{/ionContent}}
   {{/ionView}}
+</template>
+
+<template name="eventsAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Create a event"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "create a event"}}
+    </div>
+    {{#autoForm id="addEvents" collection="Events" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{> eventsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="eventsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "events"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a event"}}
+    </div>
+    {{#autoForm id="editEvents" collection="Events" doc=event type="update" template="ionic" class="padding form-rb-plain"}}
+    {{> eventsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="eventsFields">
+  {{> afQuickField name='name' label=_name}}
+  {{> afQuickField name='description' label=_description}}
+  {{> afQuickField name='type' label=_type}}
+  {{> afQuickField name='address' label=_address}}
+  {{> afQuickField name='allDay' label=_allDay}}
+  {{> afQuickField name='startDate' label=_startDate}}
+  {{> afQuickField name='endDate' label=_endDate}}
 </template>

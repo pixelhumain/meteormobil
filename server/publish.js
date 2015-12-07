@@ -1,10 +1,36 @@
+
+Meteor.publish('lists', function() {
+	if (!this.userId) {
+		return;
+	}
+	let lists = Lists.find({});
+	//console.log(JSON.stringify(lists.fetch()));
+	return lists;
+});
+
+
+Meteor.publish('cities', function(cp,country) {
+	if (!this.userId) {
+		return;
+	}
+	console.log(country);
+	console.log(cp);
+	check(cp, String);
+	check(country, String);
+	let lists = Cities.find({cp:cp,country:country});
+	console.log(JSON.stringify(lists.fetch()));
+	return lists;
+});
+
 Meteor.publish('citoyen', function() {
 	if (!this.userId) {
 		return;
 	}
-	var objectId = new Mongo.ObjectID(this.userId);
-	var citoyen = Citoyens.find({_id:objectId},{fields:{pwd:0}});
-	console.log(JSON.stringify(citoyen.fetch()));
+	let objectId = new Mongo.ObjectID(this.userId);
+	let citoyen = Citoyens.find({_id:objectId},{fields:{pwd:0}});
+	var userC = Meteor.users.findOne({_id:this.userId});
+	console.log(userC);
+	//console.log(JSON.stringify(citoyen.fetch()));
 	return citoyen;
 });
 
@@ -118,6 +144,13 @@ Meteor.publishComposite('scopeDetail', function(scope,scopeId) {
 						fields: {
 							'name': 1
 						}
+					});
+				}
+			},
+			{
+				find: function(scopeD) {
+					return Cities.find({
+						'cp': scopeD.address.postalCode
 					});
 				}
 			}

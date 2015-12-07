@@ -53,7 +53,19 @@ Events.attachSchema(
     },
     type : {
       type : String,
-      allowedValues: ['events']
+      autoform: {
+        type: "select",
+        options: function () {
+          if (Meteor.isClient) {
+            let listSelect = Lists.findOne({name:'eventTypes'});
+            if(listSelect && listSelect.list){
+              return _.map(listSelect.list,function (value,key) {
+                return {label: value, value: key};
+              });
+            }
+          }
+        }
+      }
     },
     address : {
       type : PostalAddress

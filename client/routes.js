@@ -26,7 +26,6 @@ Router.map(function() {
         }
       }*/
 Meteor.subscribe('users');
-
     }
   });
 
@@ -50,6 +49,28 @@ Meteor.subscribe('users');
     }
   });
 
+  this.route("projectsAdd", {
+    template: "projectsAdd",
+    path: 'projects/add',
+    data: function() {
+
+    },
+    waitOn: function() {
+      Meteor.subscribe('lists');
+    }
+  });
+
+  this.route("projectsEdit", {
+    template: "projectsEdit",
+    path: 'projects/:_id/edit',
+    data: function() {
+      return null;
+    },
+    waitOn: function() {
+      return [ Meteor.subscribe('lists') , Meteor.subscribe('scopeDetail', 'projects', this.params._id) ];
+    }
+  });
+
   this.route("listOrganizations", {
     path: '/organizations',
     template: "listOrganizations",
@@ -57,6 +78,28 @@ Meteor.subscribe('users');
     waitOn: function() {
       Meteor.subscribe('citoyen');
       Meteor.subscribe('citoyenOrganizations');
+    }
+  });
+
+  this.route("organizationsAdd", {
+    template: "organizationsAdd",
+    path: 'organizations/add',
+    data: function() {
+
+    },
+    waitOn: function() {
+      Meteor.subscribe('lists');
+    }
+  });
+
+  this.route("organizationsEdit", {
+    template: "organizationsEdit",
+    path: 'organizations/:_id/edit',
+    data: function() {
+      return null;
+    },
+    waitOn: function() {
+      return [ Meteor.subscribe('lists') , Meteor.subscribe('scopeDetail', 'organizations', this.params._id) ];
     }
   });
 
@@ -77,6 +120,28 @@ Meteor.subscribe('users');
     waitOn: function() {
       Meteor.subscribe('citoyen');
       Meteor.subscribe('citoyenEvents');
+    }
+  });
+
+  this.route("eventsAdd", {
+    template: "eventsAdd",
+    path: 'events/add',
+    data: function() {
+
+    },
+    waitOn: function() {
+      Meteor.subscribe('lists');
+    }
+  });
+
+  this.route("eventsEdit", {
+    template: "eventsEdit",
+    path: 'events/:_id/edit',
+    data: function() {
+      return null;
+    },
+    waitOn: function() {
+      return [ Meteor.subscribe('lists') , Meteor.subscribe('scopeDetail', 'events', this.params._id) ];
     }
   });
 

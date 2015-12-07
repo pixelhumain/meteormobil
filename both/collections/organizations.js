@@ -1,59 +1,168 @@
 Organizations = new Meteor.Collection("organizations", {idGeneration : 'MONGO'});
 
-/*
-private static $dataBinding = array(
-    "name" => array("name" => "name", "rules" => array("required", "organizationSameName")),
-    "email" => array("name" => "email", "rules" => array("email")),
-    "created" => array("name" => "created"),
-    "creator" => array("name" => "creator"),
-    "type" => array("name" => "type"),
-    "shortDescription" => array("name" => "shortDescription"),
-    "description" => array("name" => "description"),
-    "address" => array("name" => "address"),
-    "streetAddress" => array("name" => "address.streetAddress"),
-    "postalCode" => array("name" => "address.postalCode"),
-    "city" => array("name" => "address.codeInsee"),
-    "addressLocality" => array("name" => "address.addressLocality"),
-    "addressCountry" => array("name" => "address.addressCountry"),
-    "geo" => array("name" => "geo"),
-    "tags" => array("name" => "tags"),
-    "typeIntervention" => array("name" => "typeIntervention"),
-    "typeOfPublic" => array("name" => "typeOfPublic"),
-    "url"=>array("name" => "url"),
-    "telephone" => array("name" => "telephone"),
-    "video" => array("name" => "video")
-);
-*/
+this.Schemas = this.Schemas || {};
 
+this.Schemas.OrganizationsRest = new SimpleSchema({
+    organizationName : {
+      type : String
+    },
+    organizationEmail : {
+      type : String,
+      regEx: SimpleSchema.RegEx.Email
+    },
+    organizationCountry : {
+      type : String,
+      allowedValues: Countries_SELECT,
+      autoform: {
+        type: "select",
+        options: Countries_SELECT_LABEL,
+      }
+    },
+    description : {
+      type : String
+    },
+    tagsOrganization : {
+      type : [String],
+      optional: true
+    },
+    type : {
+      type : String,
+      autoform: {
+        type: "select",
+        options: function () {
+          if (Meteor.isClient) {
+            let listSelect = Lists.findOne({name:'organisationTypes'});
+            if(listSelect && listSelect.list){
+              return _.map(listSelect.list,function (value,key) {
+                return {label: value, value: key};
+              });
+            }
+          }
+        }
+      }
+    },
+    category : {
+      type : [String],
+      optional: true,
+      autoform: {
+        type: "select-checkbox",
+        options: function () {
+          if (Meteor.isClient) {
+            let type = '';
+            type = AutoForm.getFieldValue('type');
+            if(type){
+              let slug = type+'Categories'
+              console.log(slug);
+              let categories = Lists.findOne({name:slug});
+              if(categories && categories.list){
+                return _.map(categories.list,function (value,key) {
+                  return {label: value, value: key};
+                });
+              }
+            }else{return;}
+          }
+        }
+      }
+    },
+    streetAddress: {
+      type : String,
+      optional: true
+    },
+    postalCode: {
+      type : String,
+      min:5,
+      max:9
+    },
+    city: {
+      type : String,
+      autoform: {
+        type: "select"
+      }
+    },
+    geoPosLatitude: {
+      type: Number,
+      decimal: true
+    },
+    geoPosLongitude: {
+      type: Number,
+      decimal: true
+    },
+    role: {
+      type : String,
+      allowedValues: roles_SELECT,
+      optional: true,
+      autoform: {
+        type: "select",
+        options: roles_SELECT_LABEL,
+      }
+    }
+  });
 
-Organizations.attachSchema(
-  new SimpleSchema({
-    organizationSameName : {
+this.Schemas.Organizations = new SimpleSchema({
+    name : {
       type : String
     },
     email : {
       type : String,
-      regEx: SimpleSchema.RegEx.Email,
-      unique: true
+      regEx: SimpleSchema.RegEx.Email
     },
     shortDescription : {
-      type : String
+      type : String,
+      optional: true,
     },
     description : {
       type : String
     },
     tags : {
-      type : [String]
+      type : [String],
+      optional: true
     },
     url : {
-      type : String
+      type : String,
+      optional: true
     },
     telephone : {
-      type : String
+      type : String,
+      optional: true
     },
     type : {
       type : String,
-      allowedValues: ['NGO','LocalBusiness','Group','GovernmentOrganization']
+      autoform: {
+        type: "select",
+        options: function () {
+          if (Meteor.isClient) {
+            let listSelect = Lists.findOne({name:'organisationTypes'});
+            if(listSelect && listSelect.list){
+              return _.map(listSelect.list,function (value,key) {
+                return {label: value, value: key};
+              });
+            }
+          }
+        }
+      }
+    },
+    category : {
+      type : [String],
+      optional: true,
+      autoform: {
+        type: "select-checkbox",
+        options: function () {
+          if (Meteor.isClient) {
+            let type = '';
+            type = AutoForm.getFieldValue('type');
+            if(type){
+              let slug = type+'Categories'
+              console.log(slug);
+              let categories = Lists.findOne({name:slug});
+              if(categories && categories.list){
+                return _.map(categories.list,function (value,key) {
+                  return {label: value, value: key};
+                });
+              }
+            }else{return;}
+          }
+        }
+      }
     },
     address : {
       type : PostalAddress
@@ -62,18 +171,13 @@ Organizations.attachSchema(
       type : GeoCoordinates
     },
     geoPosition : {
-      type : GeoPosition
+      type : GeoPosition,
+      optional: true
     },
-    typeIntervention : {
-      type : String
-    },
-    typeOfPublic : {
-      type : String
-    },
-    links : {
-      type : linksCitoyensOrganizations,
+    /*links : {
+      type : linksOrganizations,
       optional:true
-    },
+    },*/
     creator : {
       type: String,
       autoValue: function() {
@@ -87,7 +191,8 @@ Organizations.attachSchema(
           this.unset();
         }
       },
-      denyUpdate: true
+      denyUpdate: true,
+      optional: true
     },
     created: {
       type: Date,
@@ -102,13 +207,18 @@ Organizations.attachSchema(
           this.unset();
         }
       },
-      denyUpdate: true
+      denyUpdate: true,
+      optional: true
     }
-  }));
+  });
+
+Organizations.attachSchema(
+  this.Schemas.Organizations
+);
 
   Organizations.helpers({
     members () {
-      //this.links.knows
+      //this.links.members
       if(this && this.links && this.links.members){
         let membersIds = _.map(this.links.members, function(num, key){
           let objectId = new Mongo.ObjectID(key);
