@@ -115,12 +115,24 @@ function(start, end) {
 }
 );
 
+Template.registerHelper("currentFieldValue", function (fieldName) {
+  return AutoForm.getFieldValue(fieldName) || false;
+});
+
+Template.registerHelper("Schemas", Schemas);
 
 });
 
 Tracker.autorun(function() {
   if (Meteor.userId()) {
     //Meteor.subscribe('users');
+    /*var params = {
+      "name" : "test"
+    }
+    Meteor.call("postPixel","organization","savenew",params,function (error, result) {
+      console.log(error);
+      console.log(result);
+    } );*/
   }
 });
 

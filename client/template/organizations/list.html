@@ -7,8 +7,11 @@
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
-
+  {{#if currentUser}}
+  <a href="{{ pathFor 'organizationsAdd'}}" class="button button-clear">{{> ionIcon icon="ios-plus-empty"}}</a>
+  {{/if}}
   {{/contentFor}}
+
   {{#ionView}}
   {{#ionContent}}
 
@@ -27,6 +30,11 @@
           <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
         </p>
         {{/if}}
+        {{#if currentUser}}
+        {{#if isCreator}}
+        <a href="{{ pathFor 'organizationsEdit' _id=_id._str}}" class="button button-clear">{{> ionIcon icon="compose"}}</a>
+        {{/if}}
+        {{/if}}
       </a>
       {{/each}}
       {{/transition}}
@@ -36,4 +44,103 @@
 
   {{/ionContent}}
   {{/ionView}}
+</template>
+
+<template name="organizationsAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Create a organizations"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "create a organizations"}}
+    </div>
+    {{#autoForm id="addOrganization" schema=Schemas.OrganizationsRest type="method" meteormethod="insertOrganization" template="ionic" class="padding"}}
+    {{> organizationsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="organizationsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "organizations"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a organizations"}}
+    </div>
+    {{#autoForm id="editOrganization" schema=Schemas.OrganizationsRest type="method-update" meteormethod="updateOrganization" doc=organization template="ionic" class="padding"}}
+    {{> organizationsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="organizationsFields">
+  {{> afQuickField name='organizationName' label=_name autocomplete="off"}}
+  {{> afQuickField name='organizationEmail' label=_email autocomplete="off"}}
+  {{> afQuickField name='description' label=_description autocomplete="off"}}
+  {{> afQuickField name='role' label=_role}}
+  {{> afQuickField name='tagsOrganization' label=_tags autocomplete="off"}}
+  {{> afQuickField name='type' label=_type}}
+  {{#if afFieldValueIs name="type" value="NGO"}}
+  {{> afQuickField name='category' label=_category}}
+  {{/if}}
+  {{#if afFieldValueIs name="type" value="LocalBusiness"}}
+  {{> afQuickField name='category' label=_category}}
+  {{/if}}
+  {{> afQuickField name='organizationCountry' label=_addressCountry autocomplete="off"}}
+  {{#if currentFieldValue "organizationCountry"}}
+  {{> afQuickField name='postalCode' label=_postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' label=_codeInsee options=optionsInsee}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' label=_streetAddress autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" label=_latitude value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
+
+  {{/if}}
+</template>
+
+<template name="map">
+  <div id="map" class="map"></div>
 </template>

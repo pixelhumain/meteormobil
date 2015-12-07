@@ -106,7 +106,7 @@ Citoyens.attachSchema(
       type : rolesCitoyen
     },
     links : {
-      type : linksCitoyensOrganizations,
+      type : linksCitoyens,
       optional:true
     },
     created: {

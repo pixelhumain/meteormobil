@@ -1,4 +1,45 @@
 Meteor.methods({
+  insertOrganization : function(doc){
+    console.log(doc);
+    check(doc, Schemas.OrganizationsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var retour = Meteor.call("postPixel","organization","savenew",doc);
+    return retour;
+  },
+  updateOrganization : function(modifier,documentId){
+    console.log(modifier);
+    check(documentId, String);
+    check(modifier, Schemas.OrganizationsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    modifier.organizationId=documentId;
+    var retour = Meteor.call("postPixel","organization","update",modifier);
+    return retour;
+  },
+  postPixel : function(controller,action,params){
+    check(controller, String);
+    check(action, String)
+    check(params, Object);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var userC = Meteor.users.findOne({_id:this.userId});
+    console.log(userC.services.resume.loginTokens[0].hashedToken);
+    if(userC && userC.services && userC.services.resume && userC.services.resume.loginTokens && userC.services.resume.loginTokens[0] && userC.services.resume.loginTokens[0].hashedToken){
+      var retour = callPixelRest(userC.services.resume.loginTokens[0].hashedToken,"POST",controller,action,params);
+      console.log(retour);
+      return retour;
+    }else{
+      throw new Meteor.Error("Error server");
+    }
+    //try {
+    /*} catch(e) {
+      throw new Meteor.Error("Error server");
+    }*/
+  },
   createUserAccount: function(user){
     console.log(user);
     check(user, Object);
@@ -50,10 +91,8 @@ Meteor.methods({
           coordinates : [parseFloat(insee.geo.longitude),parseFloat(insee.geo.latitude)]
         }});
         return userId;
-
-
     },
-    createUserAccountRest: function(user){
+  createUserAccountRest: function(user){
       console.log(user);
       check(user, Object);
       check(user.name, String);
@@ -83,7 +122,7 @@ Meteor.methods({
 
         let insee = Cities.findOne({insee: user.city});
 
-  //try {
+  try {
     var response = HTTP.call( 'POST', 'http://qa.communecter.org/communecter/person/register', {
       params: {
         "name": user.name,
@@ -103,9 +142,9 @@ Meteor.methods({
     }else{
       throw new Meteor.Error(response.data.msg);
     }
-  /*} catch(e) {
+  } catch(e) {
     throw new Meteor.Error("Error server");
-  }*/
+  }
 
 
 },
@@ -150,5 +189,21 @@ Photosimg.remove({_id:photo.objId})
 getcitiesbypostalcode: function(cp) {
   check(cp, String);
   return Cities.find({cp: cp}).fetch();
-}
+},
+searchCities : function(query, options){
+     if (!query) return [];
+
+     options = options || {};
+
+     // guard against client-side DOS: hard limit to 50
+     if (options.limit) {
+         options.limit = Math.min(50, Math.abs(options.limit));
+     } else {
+         options.limit = 50;
+     }
+
+     // TODO fix regexp to support multiple tokens
+     var regex = new RegExp("^" + query);
+     return Cities.find({name: {$regex:  regex, $options: "i"}}, options).fetch();
+ }
 });

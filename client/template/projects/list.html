@@ -7,8 +7,11 @@
   {{/contentFor}}
 
   {{#contentFor "headerButtonRight"}}
-
+  {{#if currentUser}}
+  <a href="{{ pathFor 'projectsAdd'}}" class="button button-clear">{{> ionIcon icon="ios-plus-empty"}}</a>
+  {{/if}}
   {{/contentFor}}
+
   {{#ionView}}
   {{#ionContent}}
 
@@ -33,6 +36,11 @@
           {{/if}}
           <i class="icon ion-ios-location"></i> {{_ "distance"}} : {{distance geo}}
         </p>
+        {{#if currentUser}}
+        {{#if isCreator}}
+        <a href="{{ pathFor 'projectsEdit' _id=_id._str}}" class="button button-clear">{{> ionIcon icon="compose"}}</a>
+        {{/if}}
+        {{/if}}
       </a>
       {{/each}}
       {{/transition}}
@@ -41,4 +49,82 @@
 
   {{/ionContent}}
   {{/ionView}}
+</template>
+
+<template name="projectsAdd">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "Create a project"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "create a project"}}
+    </div>
+    {{#autoForm id="addProjects" collection="Projects" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{> projectsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "create"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+
+<template name="projectsEdit">
+  {{#contentFor "headerButtonLeft"}}
+  {{>ionNavBackButton}}
+  {{/contentFor}}
+
+  {{#contentFor "headerButtonRight"}}
+
+  {{/contentFor}}
+
+  {{#contentFor "headerTitle"}}
+  <h1 class="title">{{_ "projects"}}</h1>
+  {{/contentFor}}
+
+  {{#ionView}}
+  {{#ionContent}}
+  <div class="list">
+    <div class="item item-divider">
+      {{_ "edit a project"}}
+    </div>
+    {{#autoForm id="editProjects" collection="Projects" doc=project type="update" template="ionic" class="padding form-rb-plain"}}
+    {{> projectsFields}}
+    <div class="item">
+      <div class="button-bar">
+        <button type="submit" class="button button-dark">{{_ "edit"}}</button>
+      </div>
+    </div>
+    {{/autoForm}}
+  </div>
+  {{/ionContent}}
+  {{/ionView}}
+</template>
+
+<template name="projectsFields">
+  {{> afQuickField name='name' label=_name}}
+  {{> afQuickField name='description' label=_description}}
+  {{> afQuickField name='tags' label=_tags}}
+  {{> afQuickField name='url' label=_url}}
+  {{> afQuickField name='licence' label=_licence}}
+  {{> afQuickField name='properties' label=_properties}}
+  {{> afQuickField name='type' label=_type}}
+  {{> afQuickField name='address' label=_address}}
+  {{> afQuickField name='startDate' label=_startDate}}
+  {{> afQuickField name='endDate' label=_endDate}}
 </template>
