@@ -67,6 +67,7 @@
     </div>
     {{#autoForm id="addOrganization" schema=Schemas.OrganizationsRest type="method" meteormethod="insertOrganization" template="ionic" class="padding"}}
     {{> organizationsFields}}
+      {{> afQuickField name='role' label=_role}}
     <div class="item">
       <div class="button-bar">
         <button type="submit" class="button button-dark">{{_ "create"}}</button>
@@ -94,7 +95,7 @@
     <div class="item item-divider">
       {{_ "edit a organizations"}}
     </div>
-    {{#autoForm id="editOrganization" schema=Schemas.OrganizationsRest type="method-update" meteormethod="updateOrganization" doc=organization template="ionic" class="padding"}}
+    {{#autoForm id="editOrganization" schema=Schemas.OrganizationsRest type="method-update" meteormethod="updateOrganization" doc=organization singleMethodArgument=true template="ionic" class="padding"}}
     {{> organizationsFields}}
     <div class="item">
       <div class="button-bar">
@@ -112,7 +113,6 @@
   {{> afQuickField name='organizationName' label=_name autocomplete="off"}}
   {{> afQuickField name='organizationEmail' label=_email autocomplete="off"}}
   {{> afQuickField name='description' label=_description autocomplete="off"}}
-  {{> afQuickField name='role' label=_role}}
   {{> afQuickField name='tagsOrganization' label=_tags autocomplete="off"}}
   {{> afQuickField name='type' label=_type}}
   {{#if afFieldValueIs name="type" value="NGO"}}

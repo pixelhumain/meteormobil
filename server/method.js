@@ -9,14 +9,13 @@ Meteor.methods({
     return retour;
   },
   updateOrganization : function(modifier,documentId){
-    console.log(modifier);
     check(documentId, String);
     check(modifier, Schemas.OrganizationsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    modifier.organizationId=documentId;
-    var retour = Meteor.call("postPixel","organization","update",modifier);
+    modifier["$set"].organizationId=documentId;
+    var retour = Meteor.call("postPixel","organization","update",modifier["$set"]);
     return retour;
   },
   postPixel : function(controller,action,params){

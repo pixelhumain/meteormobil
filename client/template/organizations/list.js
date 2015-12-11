@@ -30,6 +30,7 @@ Template.organizationsEdit.helpers({
   organization () {
     let organization = Organizations.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
     let organizationEdit = {};
+    organizationEdit._id = organization._id._str;
     organizationEdit.organizationName = organization.name;
     organizationEdit.organizationEmail = organization.email;
     organizationEdit.description = organization.description;
