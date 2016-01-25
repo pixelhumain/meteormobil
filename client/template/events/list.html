@@ -70,7 +70,7 @@
     <div class="item item-divider">
       {{_ "create a event"}}
     </div>
-    {{#autoForm id="addEvents" collection="Events" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{#autoForm id="addEvent" schema=Schemas.EventsRest type="method" meteormethod="insertEvent" template="ionic" class="padding"}}
     {{> eventsFields}}
     <div class="item">
       <div class="button-bar">
@@ -103,7 +103,7 @@
     <div class="item item-divider">
       {{_ "edit a event"}}
     </div>
-    {{#autoForm id="editEvents" collection="Events" doc=event type="update" template="ionic" class="padding form-rb-plain"}}
+    {{#autoForm id="editEvent" schema=Schemas.EventsRest type="method-update" meteormethod="updateEvent" doc=event template="ionic" class="padding"}}
     {{> eventsFields}}
     <div class="item">
       <div class="button-bar">
@@ -120,8 +120,24 @@
   {{> afQuickField name='name' label=_name}}
   {{> afQuickField name='description' label=_description}}
   {{> afQuickField name='type' label=_type}}
-  {{> afQuickField name='address' label=_address}}
   {{> afQuickField name='allDay' label=_allDay}}
   {{> afQuickField name='startDate' label=_startDate}}
   {{> afQuickField name='endDate' label=_endDate}}
+  {{> afQuickField name='country' label=_addressCountry autocomplete="off"}}
+  {{#if currentFieldValue "country"}}
+  {{> afQuickField name='postalCode' label=_postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' label=_codeInsee options=optionsInsee}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' label=_streetAddress autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" label=_latitude value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
+  {{/if}}
 </template>

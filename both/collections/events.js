@@ -1,23 +1,93 @@
 Events = new Meteor.Collection("events", {idGeneration : 'MONGO'});
 
+this.Schemas = this.Schemas || {};
+
 /*
-//From Post/Form name to database field name
-private static $dataBinding = array(
-"name" => array("name" => "name", "rules" => array("required")),
-"type" => array("name" => "type"),
-"streetAddress" => array("name" => "address.streetAddress"),
-"postalCode" => array("name" => "address.postalCode"),
-"city" => array("name" => "address.codeInsee"),
-"addressLocality" => array("name" => "address.addressLocality"),
-"addressCountry" => array("name" => "address.addressCountry"),
-"geo" => array("name" => "geo"),
-"description" => array("name" => "description"),
-"allDay" => array("name" => "allDay"),
-"startDate" => array("name" => "startDate", "rules" => array("eventStartDate")),
-"endDate" => array("name" => "endDate", "rules" => array("eventEndDate"))
-);
+newEvent = new Object;
+				newEvent.allDay = $(".form-event .all-day").bootstrapSwitch('state');
+				newEvent.name = $(".form-event .event-name ").val();
+				newEvent.type = $(".form-event .event-categories option:checked").val();
+				newEvent.startDate = startDateSubmit;
+				newEvent.endDate = endDateSubmit;
+				newEvent.description = $(".form-event .eventDetail ").val();
+				newEvent.postalCode = $(".form-event #postalCode ").val();
+				newEvent.city = $(".form-event #city ").val();
+				newEvent.country = $(".form-event #eventCountry ").val();
+				newEvent.organizerId = $(".form-event #newEventOrgaId").val();
+				newEvent.organizerType = $(".form-event #newEventOrgaType").val();
+				newEvent.geoPosLatitude = $(".form-event #geoPosLatitude").val();
+				newEvent.geoPosLongitude = $(".form-event #geoPosLongitude").val();
 */
 
+this.Schemas.EventsRest = new SimpleSchema({
+    name : {
+      type : String
+    },
+    type : {
+      type : String,
+      autoform: {
+        type: "select",
+        options: function () {
+          if (Meteor.isClient) {
+            let listSelect = Lists.findOne({name:'eventTypes'});
+            if(listSelect && listSelect.list){
+              return _.map(listSelect.list,function (value,key) {
+                return {label: value, value: key};
+              });
+            }
+          }
+        }
+      }
+    },
+    country : {
+      type : String,
+      allowedValues: Countries_SELECT,
+      autoform: {
+        type: "select",
+        options: Countries_SELECT_LABEL,
+      }
+    },
+    streetAddress: {
+      type : String,
+      optional: true
+    },
+    postalCode: {
+      type : String,
+      min:5,
+      max:9
+    },
+    city: {
+      type : String,
+      autoform: {
+        type: "select"
+      }
+    },
+    geoPosLatitude: {
+      type: Number,
+      decimal: true,
+      optional:true
+    },
+    geoPosLongitude: {
+      type: Number,
+      decimal: true,
+      optional:true
+    },
+    description : {
+      type : String
+    },
+    allDay : {
+      type : Boolean,
+      defaultValue:false
+    },
+    startDate : {
+      type : Date,
+      optional:true
+    },
+    endDate : {
+      type : Date,
+      optional:true
+    }
+  });
 
 var linksEvents = new SimpleSchema({
   events : {
@@ -42,12 +112,8 @@ var linksEvents = new SimpleSchema({
   }
 });
 
-//pourquoi des fois creator et des fois author ?
-//passer le champ created en ISOdate pareil pour startDate et endDate
-//quel sont les types ?
 
-Events.attachSchema(
-  new SimpleSchema({
+this.Schemas.Events = new SimpleSchema({
     name : {
       type : String
     },
@@ -123,7 +189,11 @@ Events.attachSchema(
       },
       denyUpdate: true
     }
-  }));
+  });
+
+  Events.attachSchema(
+    this.Schemas.Events
+  );
 
   Events.helpers({
     creatorProfile: function () {
