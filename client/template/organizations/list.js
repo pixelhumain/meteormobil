@@ -1,4 +1,4 @@
-let  pageSession = new ReactiveDict('pageOrganizations');
+pageSession = new ReactiveDict('pageOrganizations');
 
 Template.listOrganizations.helpers({
   citoyen () {
@@ -30,6 +30,7 @@ Template.organizationsEdit.helpers({
   organization () {
     let organization = Organizations.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
     let organizationEdit = {};
+    organizationEdit._id = organization._id._str;
     organizationEdit.organizationName = organization.name;
     organizationEdit.organizationEmail = organization.email;
     organizationEdit.description = organization.description;
@@ -93,36 +94,6 @@ Template.organizationsFields.onRendered(function() {
   });
 });
 
-Template.map.onCreated(function () {
-
-});
-
-Template.map.onRendered(function () {
-  var self = this;
-  L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images';
-  let map = L.map('map', {
-    doubleClickZoom: false
-  });
-  L.tileLayer.provider('Thunderforest.Outdoors').addTo(map);
-  var marker;
-  self.autorun(function(c) {
-    let city = pageSession.get('city') || AutoForm.getFieldValue('city');
-    let latitude = pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
-    let longitude = pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
-    console.log(`${city} ${latitude} ${longitude}`);
-    if (city && latitude && longitude) {
-      console.log('recompute');
-      map.setView([latitude, longitude], 13);
-      if(marker){
-        map.removeLayer(marker);
-      }
-      marker = L.marker([latitude, longitude]).addTo(map);
-    }
-    //c.stop();
-  });
-
-});
-
 Template.organizationsFields.events({
   'keyup input[name="postalCode"],change input[name="postalCode"]': function(e, tmpl) {
     e.preventDefault();
@@ -177,6 +148,7 @@ Template.organizationsFields.events({
     request = transformNominatimUrl(request);
     request = "?q=" + request;
 
+console.log('http://nominatim.openstreetmap.org/search'+request+'&format=json&polygon=0&addressdetails=1');
 
     if(event.currentTarget.value.length>5){
       HTTP.get( 'http://nominatim.openstreetmap.org/search'+request+'&format=json&polygon=0&addressdetails=1', {},
@@ -202,20 +174,20 @@ Template.organizationsFields.events({
 
 AutoForm.addHooks(['addOrganization', 'editOrganization'], {
   after: {
-    insertOrganization(error, result) {
+    method : function(error, result) {
       if (error) {
         console.log("Insert Error:", error);
       } else {
-        console.log("Insert Result:", result);
-        Router.go('organizationsList');
+        //console.log("Insert Result:", result);
+        Router.go('listOrganizations');
       }
     },
-    updateOrganization(error, result) {
+    "method-update" : function(error, result) {
       if (error) {
         console.log("Update Error:", error);
       } else {
-        console.log("Update Result:", result);
-        Router.go('organizationsList');
+        //console.log("Update Result:", result);
+        Router.go('listOrganizations');
       }
     }
   },
@@ -232,7 +204,7 @@ AutoForm.addHooks(['addOrganization', 'editOrganization'], {
 
 AutoForm.addHooks(['addOrganization'], {
   before: {
-    insertOrganization(doc, template) {
+    method : function(doc, template) {
       return doc;
     }
   }

@@ -61,16 +61,16 @@
   {{/contentFor}}
 
   {{#contentFor "headerTitle"}}
-  <h1 class="title">{{_ "Create a project"}}</h1>
+  <h1 class="title">{{_ "Create a projects"}}</h1>
   {{/contentFor}}
 
   {{#ionView}}
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "create a project"}}
+      {{_ "create a projects"}}
     </div>
-    {{#autoForm id="addProjects" collection="Projects" type="insert" template="ionic" class="padding form-rb-plain"}}
+    {{#autoForm id="addProject" schema=Schemas.ProjectsRest type="method" meteormethod="insertProject" template="ionic" class="padding"}}
     {{> projectsFields}}
     <div class="item">
       <div class="button-bar">
@@ -89,10 +89,6 @@
   {{>ionNavBackButton}}
   {{/contentFor}}
 
-  {{#contentFor "headerButtonRight"}}
-
-  {{/contentFor}}
-
   {{#contentFor "headerTitle"}}
   <h1 class="title">{{_ "projects"}}</h1>
   {{/contentFor}}
@@ -101,9 +97,9 @@
   {{#ionContent}}
   <div class="list">
     <div class="item item-divider">
-      {{_ "edit a project"}}
+      {{_ "edit a projects"}}
     </div>
-    {{#autoForm id="editProjects" collection="Projects" doc=project type="update" template="ionic" class="padding form-rb-plain"}}
+    {{#autoForm id="editProject" schema=Schemas.ProjectsRest type="method-update" meteormethod="updateProject" doc=project template="ionic" class="padding"}}
     {{> projectsFields}}
     <div class="item">
       <div class="button-bar">
@@ -116,7 +112,33 @@
   {{/ionView}}
 </template>
 
+
 <template name="projectsFields">
+  {{> afQuickField name='projectName' label=_name autocomplete="off"}}
+  {{> afQuickField name='projectStartDate' label=_startDate}}
+  {{> afQuickField name='projectEndDate' label=_endDate}}
+  {{> afQuickField name='description' label=_description autocomplete="off"}}
+  {{> afQuickField name='tagsProject' label=_tags autocomplete="off"}}
+  {{> afQuickField name='projectCountry' label=_addressCountry autocomplete="off"}}
+  {{#if currentFieldValue "projectCountry"}}
+  {{> afQuickField name='postalCode' label=_postalCode autocomplete="off"}}
+  {{#if currentFieldValue "postalCode"}}
+  {{#if optionsInsee}}
+  {{> afQuickField name='city' label=_codeInsee options=optionsInsee}}
+  {{else}}
+  <div class="item item-text-wrap assertive"><i class="icon ion-android-alert"></i> {{_ "Error not postal code match"}}</div>
+  {{/if}}
+  {{/if}}
+  {{> afQuickField name='streetAddress' label=_streetAddress autocomplete="off"}}
+  {{#if latlng}}
+  {{> map}}
+  {{/if}}
+  {{> afQuickField name='geoPosLatitude' type="hidden" label=_latitude value=latitude}}
+  {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
+  {{/if}}
+</template>
+
+<template name="projectsFieldsOld">
   {{> afQuickField name='name' label=_name}}
   {{> afQuickField name='description' label=_description}}
   {{> afQuickField name='tags' label=_tags}}

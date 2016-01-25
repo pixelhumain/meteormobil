@@ -1,26 +1,59 @@
 Projects = new Meteor.Collection("projects", {idGeneration : 'MONGO'});
 
-/*
-private static $dataBinding = array(
-    "name" => array("name" => "name", "rules" => array("required")),
+this.Schemas = this.Schemas || {};
 
-    "address" => array("name" => "address"),
-    "postalCode" => array("name" => "address.postalCode"),
-    "city" => array("name" => "address.codeInsee"),
-    "addressCountry" => array("name" => "address.addressCountry"),
-
-    "geo" => array("name" => "geo"),
-
-    "description" => array("name" => "description"),
-    "startDate" => array("name" => "startDate", "rules" => array("projectStartDate")),
-    "endDate" => array("name" => "endDate", "rules" => array("projectEndDate")),
-    "tags" => array("name" => "tags"),
-    "url" => array("name" => "url"),
-    "licence" => array("name" => "licence"),
-    "avancement" => array("name" => "properties.avancement"),
-);
-*/
-
+this.Schemas.ProjectsRest = new SimpleSchema({
+  projectName : {
+    type : String
+  },
+  projectCountry : {
+    type : String,
+    allowedValues: Countries_SELECT,
+    autoform: {
+      type: "select",
+      options: Countries_SELECT_LABEL,
+    }
+  },
+  description : {
+    type : String,
+    optional: true
+  },
+  projectStartDate : {
+    type : Date,
+    optional: true
+  },
+  projectEndDate : {
+    type : Date,
+    optional: true
+  },
+  tagsProject : {
+    type : [String],
+    optional: true
+  },
+  streetAddress: {
+    type : String,
+    optional: true
+  },
+  postalCode: {
+    type : String,
+    min:5,
+    max:9
+  },
+  city: {
+    type : String,
+    autoform: {
+      type: "select"
+    }
+  },
+  geoPosLatitude: {
+    type: Number,
+    decimal: true
+  },
+  geoPosLongitude: {
+    type: Number,
+    decimal: true
+  }
+});
 
 var linksProjects = new SimpleSchema({
   events : {
@@ -49,8 +82,7 @@ var linksProjects = new SimpleSchema({
 //passer le champ created en ISOdate pareil pour startDate et endDate
 //quel sont les types ?
 
-Projects.attachSchema(
-  new SimpleSchema({
+this.Schemas.Projects =   new SimpleSchema({
     name : {
       type : String
     },
@@ -125,7 +157,11 @@ Projects.attachSchema(
       },
       denyUpdate: true
     }
-  }));
+  });
+
+  Projects.attachSchema(
+    this.Schemas.Projects
+  );
 
 
   Projects.helpers({
