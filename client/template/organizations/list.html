@@ -95,7 +95,7 @@
     <div class="item item-divider">
       {{_ "edit a organizations"}}
     </div>
-    {{#autoForm id="editOrganization" schema=Schemas.OrganizationsRest type="method-update" meteormethod="updateOrganization" doc=organization singleMethodArgument=true template="ionic" class="padding"}}
+    {{#autoForm id="editOrganization" schema=Schemas.OrganizationsRest type="method-update" meteormethod="updateOrganization" doc=organization template="ionic" class="padding"}}
     {{> organizationsFields}}
     <div class="item">
       <div class="button-bar">
@@ -139,8 +139,4 @@
   {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
 
   {{/if}}
-</template>
-
-<template name="map">
-  <div id="map" class="map"></div>
 </template>

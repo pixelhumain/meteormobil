@@ -1,4 +1,23 @@
 Meteor.methods({
+  insertProject : function(doc){
+    console.log(doc);
+    check(doc, Schemas.ProjectsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var retour = Meteor.call("postPixel","project","savenew",doc);
+    return retour;
+  },
+  updateProject : function(modifier,documentId){
+    check(documentId, String);
+    check(modifier, Schemas.ProjectsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    modifier["$set"].projectId=documentId;
+    var retour = Meteor.call("postPixel","project","update",modifier["$set"]);
+    return retour;
+  },
   insertOrganization : function(doc){
     console.log(doc);
     check(doc, Schemas.OrganizationsRest);
@@ -9,6 +28,7 @@ Meteor.methods({
     return retour;
   },
   updateOrganization : function(modifier,documentId){
+    console.log(documentId);
     check(documentId, String);
     check(modifier, Schemas.OrganizationsRest);
     if (!this.userId) {

@@ -1,15 +1,210 @@
+pageSession = new ReactiveDict('pageProjects');
+
 Template.listProjects.helpers({
   citoyen () {
     return Citoyens.findOne({_id:new Mongo.ObjectID(Meteor.userId())});
   }
 });
 
+Template.projectsAdd.onCreated(function () {
+  pageSession.set( 'postalCode', null);
+  pageSession.set( 'projectCountry', null);
+  pageSession.set('city', null);
+  pageSession.set('geoPosLatitude', null);
+  pageSession.set('geoPosLongitude', null);
+});
+
+Template.projectsEdit.onCreated(function () {
+  pageSession.set( 'postalCode', null);
+  pageSession.set( 'projectCountry', null);
+  pageSession.set('city', null);
+  pageSession.set('geoPosLatitude', null);
+  pageSession.set('geoPosLongitude', null);
+});
+
+Template.projectsAdd.helpers({
+
+});
+
 Template.projectsEdit.helpers({
   project () {
-    return Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    let project = Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
+    let projectEdit = {};
+    projectEdit._id = project._id._str;
+    projectEdit.projectName = project.name;
+    projectEdit.description = project.description;
+    projectEdit.projectStartDate = project.startDate;
+    projectEdit.projectEndDate = project.endDate;
+    projectEdit.projectCountry = project.address.addressCountry;
+    projectEdit.postalCode = project.address.postalCode;
+    projectEdit.city = project.address.codeInsee;
+    if(project && project.address && project.address.streetAddress){
+    projectEdit.streetAddress = project.address.streetAddress;
+    }
+    projectEdit.geoPosLatitude = project.geo.latitude;
+    projectEdit.geoPosLongitude = project.geo.longitude;
+    return projectEdit;
   }
 });
 
-Template.projectsFields.helpers({
 
+
+Template.projectsFields.helpers({
+  optionsInsee () {
+    let postalCode = '';
+    let projectCountry = '';
+    postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
+    projectCountry = pageSession.get('projectCountry') || AutoForm.getFieldValue('projectCountry');
+    if(postalCode && projectCountry){
+      let insee = Cities.find({cp:postalCode,country:projectCountry});
+      console.log(insee.fetch());
+      if(insee){
+        return insee.map(function (c) {
+          return {label: c.alternateName, value: c.insee};
+        });
+      }
+    }else{return false;}
+  },
+  latlng () {
+    let city = pageSession.get('city') || AutoForm.getFieldValue('city');
+    let latitude = pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
+    let longitude = pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
+    return city && latitude && longitude;
+  },
+  longitude (){
+    return pageSession.get('geoPosLongitude') || AutoForm.getFieldValue('geoPosLongitude');
+  },
+  latitude (){
+    return pageSession.get('geoPosLatitude') || AutoForm.getFieldValue('geoPosLatitude');
+  }
+});
+
+
+Template.projectsFields.onRendered(function() {
+  var self = this;
+  self.autorun(function() {
+    let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
+    let projectCountry = pageSession.get('projectCountry')  || AutoForm.getFieldValue('projectCountry');
+      console.log(`${postalCode} ${projectCountry}`);
+    console.log('recompute');
+    if (!!postalCode) {
+      self.subscribe('cities',postalCode,projectCountry);
+    }
+  });
+});
+
+
+Template.projectsFields.events({
+  'keyup input[name="postalCode"],change input[name="postalCode"]': function(e, tmpl) {
+    e.preventDefault();
+    pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
+  },
+  'change select[name="projectCountry"]': function(e, tmpl) {
+    e.preventDefault();
+    console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'projectCountry', tmpl.$(e.currentTarget).val() );
+  },
+  'change select[name="city"]': function(e, tmpl) {
+    e.preventDefault();
+    console.log(tmpl.$(e.currentTarget).val());
+    pageSession.set( 'city', tmpl.$(e.currentTarget).val() );
+    let insee = Cities.findOne({insee:tmpl.$(e.currentTarget).val()});
+    pageSession.set( 'geoPosLatitude', insee.geo.latitude);
+    pageSession.set( 'geoPosLongitude', insee.geo.longitude);
+    console.log(insee.geo.latitude);
+    console.log(insee.geo.longitude);
+  },
+  'change input[name="streetAddress"]': function(event,template){
+
+    function addToRequest(request, dataStr){
+      if(dataStr == "") return request;
+      if(request != "") dataStr = " " + dataStr;
+      return transformNominatimUrl(request + dataStr);
+    }
+
+    //remplace les espaces par des +
+    function transformNominatimUrl(str){
+      var res = "";
+      for(var i = 0; i<str.length; i++){
+        res += (str.charAt(i) == " ") ? "+" : str.charAt(i);
+      }
+      return res;
+    };
+
+
+    let postalCode = '';
+    let projectCountry = '';
+    let streetAddress = '';
+    postalCode = AutoForm.getFieldValue('postalCode');
+    projectCountry = template.find('select[name="projectCountry"]').options[template.find('select[name="projectCountry"]').selectedIndex].text;
+    console.log(projectCountry);
+    streetAddress = AutoForm.getFieldValue('streetAddress');
+
+    var request = "";
+
+    request = addToRequest(request, streetAddress);
+    request = addToRequest(request, postalCode);
+    request = addToRequest(request, projectCountry);
+    request = transformNominatimUrl(request);
+    request = "?q=" + request;
+
+
+    if(event.currentTarget.value.length>5){
+      HTTP.get( 'http://nominatim.openstreetmap.org/search'+request+'&format=json&polygon=0&addressdetails=1', {},
+      function( error, response ) {
+        if ( error ) {
+          console.log( error );
+        } else {
+          console.log(response.data);
+          if (response.data.length > 0) {
+            pageSession.set( 'geoPosLatitude', response.data[0].lat);
+            pageSession.set( 'geoPosLongitude', response.data[0].lon);
+            console.log(response.data[0].lat);
+            console.log(response.data[0].lon);
+          }
+
+          return;
+        }
+      }
+    );
+  }
+}
+});
+
+AutoForm.addHooks(['addProject', 'editProject'], {
+  after: {
+    method : function(error, result) {
+      if (error) {
+        console.log("Insert Error:", error);
+      } else {
+        //console.log("Insert Result:", result);
+        Router.go('listProjects');
+      }
+    },
+    "method-update" : function(error, result) {
+      if (error) {
+        console.log("Update Error:", error);
+      } else {
+        //console.log("Update Result:", result);
+        Router.go('listProjects');
+      }
+    }
+  },
+  onError: function(formType, error) {
+    let ref;
+    if (error.errorType && error.errorType === 'Meteor.Error') {
+       //if ((ref = error.reason) === 'Name must be unique') {
+      //this.addStickyValidationError('name', error.reason);
+      //AutoForm.validateField(this.formId, 'name');
+    //}
+  }
+  }
+});
+
+AutoForm.addHooks(['addProject'], {
+  before: {
+    method : function(doc, template) {
+      return doc;
+    }
+  }
 });
