@@ -1,11 +1,30 @@
 Meteor.methods({
+  insertEvent : function(doc){
+    console.log(doc);
+    check(doc, Schemas.EventsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    var retour = Meteor.call("postPixel","event","save",doc);
+    return retour;
+  },
+  updateEvent : function(modifier,documentId){
+    check(documentId, String);
+    check(modifier, Schemas.EventsRest);
+    if (!this.userId) {
+      throw new Meteor.Error("not-authorized");
+    }
+    modifier["$set"].eventId=documentId;
+    var retour = Meteor.call("postPixel","event","update",modifier["$set"]);
+    return retour;
+  },
   insertProject : function(doc){
     console.log(doc);
     check(doc, Schemas.ProjectsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    var retour = Meteor.call("postPixel","project","savenew",doc);
+    var retour = Meteor.call("postPixel","project","save",doc);
     return retour;
   },
   updateProject : function(modifier,documentId){
@@ -24,6 +43,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
+    //method différente : savenew
     var retour = Meteor.call("postPixel","organization","savenew",doc);
     return retour;
   },

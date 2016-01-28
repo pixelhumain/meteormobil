@@ -114,13 +114,13 @@
 
 
 <template name="projectsFields">
-  {{> afQuickField name='projectName' label=_name autocomplete="off"}}
-  {{> afQuickField name='projectStartDate' label=_startDate}}
-  {{> afQuickField name='projectEndDate' label=_endDate}}
+  {{> afQuickField name='name' label=_name autocomplete="off"}}
+  {{> afQuickField name='startDate' label=_startDate}}
+  {{> afQuickField name='endDate' label=_endDate}}
   {{> afQuickField name='description' label=_description autocomplete="off"}}
-  {{> afQuickField name='tagsProject' label=_tags autocomplete="off"}}
-  {{> afQuickField name='projectCountry' label=_addressCountry autocomplete="off"}}
-  {{#if currentFieldValue "projectCountry"}}
+  {{> afQuickField name='tags' label=_tags autocomplete="off"}}
+  {{> afQuickField name='country' label=_addressCountry autocomplete="off"}}
+  {{#if currentFieldValue "country"}}
   {{> afQuickField name='postalCode' label=_postalCode autocomplete="off"}}
   {{#if currentFieldValue "postalCode"}}
   {{#if optionsInsee}}
@@ -136,17 +136,4 @@
   {{> afQuickField name='geoPosLatitude' type="hidden" label=_latitude value=latitude}}
   {{> afQuickField name='geoPosLongitude' type="hidden" label=_longitude value=longitude}}
   {{/if}}
-</template>
-
-<template name="projectsFieldsOld">
-  {{> afQuickField name='name' label=_name}}
-  {{> afQuickField name='description' label=_description}}
-  {{> afQuickField name='tags' label=_tags}}
-  {{> afQuickField name='url' label=_url}}
-  {{> afQuickField name='licence' label=_licence}}
-  {{> afQuickField name='properties' label=_properties}}
-  {{> afQuickField name='type' label=_type}}
-  {{> afQuickField name='address' label=_address}}
-  {{> afQuickField name='startDate' label=_startDate}}
-  {{> afQuickField name='endDate' label=_endDate}}
 </template>

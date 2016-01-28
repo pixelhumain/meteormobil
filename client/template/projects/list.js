@@ -7,16 +7,16 @@ Template.listProjects.helpers({
 });
 
 Template.projectsAdd.onCreated(function () {
-  pageSession.set( 'postalCode', null);
-  pageSession.set( 'projectCountry', null);
+  pageSession.set('postalCode', null);
+  pageSession.set('country', null);
   pageSession.set('city', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
 });
 
 Template.projectsEdit.onCreated(function () {
-  pageSession.set( 'postalCode', null);
-  pageSession.set( 'projectCountry', null);
+  pageSession.set('postalCode', null);
+  pageSession.set('country', null);
   pageSession.set('city', null);
   pageSession.set('geoPosLatitude', null);
   pageSession.set('geoPosLongitude', null);
@@ -31,11 +31,11 @@ Template.projectsEdit.helpers({
     let project = Projects.findOne({_id:new Mongo.ObjectID(Router.current().params._id)});
     let projectEdit = {};
     projectEdit._id = project._id._str;
-    projectEdit.projectName = project.name;
+    projectEdit.name = project.name;
     projectEdit.description = project.description;
-    projectEdit.projectStartDate = project.startDate;
-    projectEdit.projectEndDate = project.endDate;
-    projectEdit.projectCountry = project.address.addressCountry;
+    projectEdit.startDate = project.startDate;
+    projectEdit.endDate = project.endDate;
+    projectEdit.country = project.address.addressCountry;
     projectEdit.postalCode = project.address.postalCode;
     projectEdit.city = project.address.codeInsee;
     if(project && project.address && project.address.streetAddress){
@@ -52,11 +52,11 @@ Template.projectsEdit.helpers({
 Template.projectsFields.helpers({
   optionsInsee () {
     let postalCode = '';
-    let projectCountry = '';
+    let country = '';
     postalCode = pageSession.get('postalCode') || AutoForm.getFieldValue('postalCode');
-    projectCountry = pageSession.get('projectCountry') || AutoForm.getFieldValue('projectCountry');
-    if(postalCode && projectCountry){
-      let insee = Cities.find({cp:postalCode,country:projectCountry});
+    country = pageSession.get('country') || AutoForm.getFieldValue('country');
+    if(postalCode && country){
+      let insee = Cities.find({cp:postalCode,country:country});
       console.log(insee.fetch());
       if(insee){
         return insee.map(function (c) {
@@ -84,11 +84,11 @@ Template.projectsFields.onRendered(function() {
   var self = this;
   self.autorun(function() {
     let postalCode = pageSession.get('postalCode')  || AutoForm.getFieldValue('postalCode');
-    let projectCountry = pageSession.get('projectCountry')  || AutoForm.getFieldValue('projectCountry');
-      console.log(`${postalCode} ${projectCountry}`);
+    let country = pageSession.get('country')  || AutoForm.getFieldValue('country');
+      console.log(`${postalCode} ${country}`);
     console.log('recompute');
     if (!!postalCode) {
-      self.subscribe('cities',postalCode,projectCountry);
+      self.subscribe('cities',postalCode,country);
     }
   });
 });
@@ -99,10 +99,10 @@ Template.projectsFields.events({
     e.preventDefault();
     pageSession.set( 'postalCode', tmpl.$(e.currentTarget).val() );
   },
-  'change select[name="projectCountry"]': function(e, tmpl) {
+  'change select[name="country"]': function(e, tmpl) {
     e.preventDefault();
     console.log(tmpl.$(e.currentTarget).val());
-    pageSession.set( 'projectCountry', tmpl.$(e.currentTarget).val() );
+    pageSession.set( 'country', tmpl.$(e.currentTarget).val() );
   },
   'change select[name="city"]': function(e, tmpl) {
     e.preventDefault();
@@ -133,18 +133,18 @@ Template.projectsFields.events({
 
 
     let postalCode = '';
-    let projectCountry = '';
+    let country = '';
     let streetAddress = '';
     postalCode = AutoForm.getFieldValue('postalCode');
-    projectCountry = template.find('select[name="projectCountry"]').options[template.find('select[name="projectCountry"]').selectedIndex].text;
-    console.log(projectCountry);
+    country = template.find('select[name="country"]').options[template.find('select[name="country"]').selectedIndex].text;
+    console.log(country);
     streetAddress = AutoForm.getFieldValue('streetAddress');
 
     var request = "";
 
     request = addToRequest(request, streetAddress);
     request = addToRequest(request, postalCode);
-    request = addToRequest(request, projectCountry);
+    request = addToRequest(request, country);
     request = transformNominatimUrl(request);
     request = "?q=" + request;
 

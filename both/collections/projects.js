@@ -1,59 +1,74 @@
 Projects = new Meteor.Collection("projects", {idGeneration : 'MONGO'});
 
+/*
+newProject.name = $(".form-project .project-name ").val(),
+			//newProject.url = $('.form-project .project-url').val(),
+			//newProject.version = $(".form-project .project-version").val(),
+			//newProject.licence = $(".form-project .project-licence").val(),
+			newProject.startDate=startDateSubmitProj,
+			newProject.endDate=endDateSubmitProj,
+			newProject.city=$(".form-project #city").val(),
+			newProject.postalCode=$(".form-project #postalCode").val(),
+			newProject.description=$(".form-project .project-description").val(),
+			newProject.geoPosLatitude = $(".form-project #geoPosLatitude").val(),
+			newProject.geoPosLongitude = $(".form-project #geoPosLongitude").val(),
+			newProject.tags = $(".form-project #tagsProject").val();
+*/
+
 this.Schemas = this.Schemas || {};
 
-this.Schemas.ProjectsRest = new SimpleSchema({
-  projectName : {
-    type : String
-  },
-  projectCountry : {
-    type : String,
-    allowedValues: Countries_SELECT,
-    autoform: {
-      type: "select",
-      options: Countries_SELECT_LABEL,
+this.Schemas.ProjectsRest =   new SimpleSchema({
+    name : {
+      type : String
+    },
+    description : {
+      type : String
+    },
+    tags : {
+      type : [String],
+      optional:true
+    },
+    startDate : {
+      type : Date,
+      optional:true
+    },
+    endDate : {
+      type : Date,
+      optional:true
+    },
+    country : {
+      type : String,
+      allowedValues: Countries_SELECT,
+      autoform: {
+        type: "select",
+        options: Countries_SELECT_LABEL,
+      }
+    },
+    streetAddress: {
+      type : String,
+      optional: true
+    },
+    postalCode: {
+      type : String,
+      min:5,
+      max:9
+    },
+    city: {
+      type : String,
+      autoform: {
+        type: "select"
+      }
+    },
+    geoPosLatitude: {
+      type: Number,
+      decimal: true
+    },
+    geoPosLongitude: {
+      type: Number,
+      decimal: true
     }
-  },
-  description : {
-    type : String,
-    optional: true
-  },
-  projectStartDate : {
-    type : Date,
-    optional: true
-  },
-  projectEndDate : {
-    type : Date,
-    optional: true
-  },
-  tagsProject : {
-    type : [String],
-    optional: true
-  },
-  streetAddress: {
-    type : String,
-    optional: true
-  },
-  postalCode: {
-    type : String,
-    min:5,
-    max:9
-  },
-  city: {
-    type : String,
-    autoform: {
-      type: "select"
-    }
-  },
-  geoPosLatitude: {
-    type: Number,
-    decimal: true
-  },
-  geoPosLongitude: {
-    type: Number,
-    decimal: true
-  }
-});
+  });
+
 
 var linksProjects = new SimpleSchema({
   events : {
@@ -77,10 +92,6 @@ var linksProjects = new SimpleSchema({
     optional:true
   }
 });
-
-//pourquoi des fois creator et des fois author ?
-//passer le champ created en ISOdate pareil pour startDate et endDate
-//quel sont les types ?
 
 this.Schemas.Projects =   new SimpleSchema({
     name : {
