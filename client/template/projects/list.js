@@ -35,6 +35,7 @@ Template.projectsEdit.helpers({
     projectEdit.description = project.description;
     projectEdit.startDate = project.startDate;
     projectEdit.endDate = project.endDate;
+    projectEdit.tags = project.tags;
     projectEdit.country = project.address.addressCountry;
     projectEdit.postalCode = project.address.postalCode;
     projectEdit.city = project.address.codeInsee;
