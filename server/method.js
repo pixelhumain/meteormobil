@@ -20,6 +20,8 @@ Meteor.methods({
   },
   insertProject : function(doc){
     console.log(doc);
+    ///communecter/project/save/id/{_id_orga}/type/organization
+    ///communecter/project/save/{id/{_id_citoyen}/type/citoyen}
     check(doc, Schemas.ProjectsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -28,10 +30,20 @@ Meteor.methods({
     return retour;
   },
   updateProject : function(modifier,documentId){
+    ///communecter/project/update/id/{_id_orga}/type/organization
+    ///communecter/project/update/{id/{_id_citoyen}/type/citoyen}
+    //pas besoin de l'id et du type seulement pojectId en POST ?
     check(documentId, String);
     check(modifier, Schemas.ProjectsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
+    }
+    //Y-m-d H:i
+    if(modifier["$set"].startDate){
+    modifier["$set"].startDate=moment(modifier["$set"].startDate).format();
+    }
+    if(modifier["$set"].endDate){
+    modifier["$set"].endDate=moment(modifier["$set"].endDate).format();
     }
     modifier["$set"].projectId=documentId;
     var retour = Meteor.call("postPixel","project","update",modifier["$set"]);
@@ -43,8 +55,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    //method différente : savenew
-    var retour = Meteor.call("postPixel","organization","savenew",doc);
+    var retour = Meteor.call("postPixel","organization","save",doc);
     return retour;
   },
   updateOrganization : function(modifier,documentId){
