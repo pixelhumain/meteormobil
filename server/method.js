@@ -1,9 +1,29 @@
+
+/*
+communecter/event/saveattendees
+idEvent
+attendeeId
+*/
+
 Meteor.methods({
   insertEvent : function(doc){
+    //type : organizations / projects > organizerId
     console.log(doc);
     check(doc, Schemas.EventsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
+    }
+    if(doc.startDate){
+    doc.startDate=moment(doc.startDate).format();
+    }
+    if(doc.endDate){
+    doc.endDate=moment(doc.endDate).format();
+    }
+    if(!doc.organizerId){
+      doc.organizerId=this.userId;
+    }
+    if(!doc.organizerType){
+      doc.organizerType="citoyens";
     }
     var retour = Meteor.call("postPixel","event","save",doc);
     return retour;
@@ -13,6 +33,18 @@ Meteor.methods({
     check(modifier, Schemas.EventsRest);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
+    }
+    if(modifier["$set"].startDate){
+    modifier["$set"].startDate=moment(modifier["$set"].startDate).format();
+    }
+    if(modifier["$set"].endDate){
+    modifier["$set"].endDate=moment(modifier["$set"].endDate).format();
+    }
+    if(!modifier["$set"].organizerId){
+      modifier["$set"].organizerId=this.userId;
+    }
+    if(!modifier["$set"].organizerType){
+      modifier["$set"].organizerType="citoyens";
     }
     modifier["$set"].eventId=documentId;
     var retour = Meteor.call("postPixel","event","update",modifier["$set"]);
@@ -50,6 +82,7 @@ Meteor.methods({
     return retour;
   },
   insertOrganization : function(doc){
+    // project  > organizationId et type
     console.log(doc);
     check(doc, Schemas.OrganizationsRest);
     if (!this.userId) {

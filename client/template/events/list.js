@@ -36,6 +36,7 @@ Template.eventsEdit.helpers({
     eventEdit.description = event.description;
     eventEdit.startDate = event.startDate;
     eventEdit.endDate = event.endDate;
+    eventEdit.allDay = event.allDay;
     eventEdit.country = event.address.addressCountry;
     eventEdit.postalCode = event.address.postalCode;
     eventEdit.city = event.address.codeInsee;
@@ -147,11 +148,9 @@ Template.eventsFields.events({
     request = addToRequest(request, postalCode);
     request = addToRequest(request, country);
     request = transformNominatimUrl(request);
-    request = "?q=" + request;
-
 
     if(event.currentTarget.value.length>5){
-      HTTP.get( 'http://nominatim.openstreetmap.org/search'+request+'&format=json&polygon=0&addressdetails=1', {},
+      /*HTTP.get( 'http://nominatim.openstreetmap.org/search?q='+request+'&format=json&polygon=0&addressdetails=1', {},
       function( error, response ) {
         if ( error ) {
           console.log( error );
@@ -162,12 +161,28 @@ Template.eventsFields.events({
             pageSession.set( 'geoPosLongitude', response.data[0].lon);
             console.log(response.data[0].lat);
             console.log(response.data[0].lon);
-          }
-
+        }
           return;
         }
       }
-    );
+    );*/
+    ///+Meteor.settings.public.googlekey
+    HTTP.get( 'https://maps.googleapis.com/maps/api/geocode/json?address=' + request + '&key='+Meteor.settings.public.googlekey, {},
+    function( error, response ) {
+      if ( error ) {
+        console.log( error );
+      } else {
+        console.log(response.data);
+        if (response.data.results.length > 0 && response.data.status != "ZERO_RESULTS") {
+          pageSession.set( 'geoPosLatitude', response.data.results[0].geometry.location.lat);
+          pageSession.set( 'geoPosLongitude', response.data.results[0].geometry.location.lng);
+          console.log(response.data.results[0].geometry.location.lat);
+          console.log(response.data.results[0].geometry.location.lng);
+        }
+        return;
+      }
+    }
+  );
   }
 }
 });
